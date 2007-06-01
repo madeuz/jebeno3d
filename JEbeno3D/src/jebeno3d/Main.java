@@ -24,141 +24,108 @@ public class Main extends javax.swing.JFrame {
    */
    // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
    private void initComponents() {
+      jTabbedPane1 = new javax.swing.JTabbedPane();
       jPanelWej = new javax.swing.JPanel();
-      jLabelWej = new javax.swing.JLabel();
       jButtonWejWiz = new javax.swing.JButton();
       jButtonWejZap = new javax.swing.JButton();
-      jPanel2 = new javax.swing.JPanel();
-      jLabel2 = new javax.swing.JLabel();
-      jButton2 = new javax.swing.JButton();
-      jButton6 = new javax.swing.JButton();
-      jPanel3 = new javax.swing.JPanel();
-      jLabel3 = new javax.swing.JLabel();
-      jButton3 = new javax.swing.JButton();
-      jButton7 = new javax.swing.JButton();
-      jPanel4 = new javax.swing.JPanel();
-      jLabel4 = new javax.swing.JLabel();
-      jButton4 = new javax.swing.JButton();
-      jButton8 = new javax.swing.JButton();
+      jButtonOtw = new javax.swing.JButton();
+      jPanelKon = new javax.swing.JPanel();
+      jButtonKonWiz = new javax.swing.JButton();
+      jButtonKonZap = new javax.swing.JButton();
+      jPanelWyj = new javax.swing.JPanel();
+      jButtonWyjWiz = new javax.swing.JButton();
+      jButtonWyjZap = new javax.swing.JButton();
 
-      getContentPane().setLayout(new java.awt.GridLayout(0, 1, 1, 0));
+      getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.X_AXIS));
 
       setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-      jPanelWej.setBackground(new java.awt.Color(204, 255, 255));
-      jLabelWej.setText("Modu\u0142 Wej\u015bciowy");
-
+      jTabbedPane1.setBackground(javax.swing.UIManager.getDefaults().getColor("Button.background"));
       jButtonWejWiz.setText("Wizualizacja");
 
       jButtonWejZap.setText("Zapisz");
+
+      jButtonOtw.setText("Otw\u00f3rz");
 
       javax.swing.GroupLayout jPanelWejLayout = new javax.swing.GroupLayout(jPanelWej);
       jPanelWej.setLayout(jPanelWejLayout);
       jPanelWejLayout.setHorizontalGroup(
          jPanelWejLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addComponent(jLabelWej, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
-         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelWejLayout.createSequentialGroup()
-            .addGap(164, 164, 164)
-            .addComponent(jButtonWejZap)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(jButtonWejWiz))
+         .addGroup(jPanelWejLayout.createSequentialGroup()
+            .addContainerGap()
+            .addGroup(jPanelWejLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+               .addGroup(jPanelWejLayout.createSequentialGroup()
+                  .addComponent(jButtonWejZap)
+                  .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                  .addComponent(jButtonWejWiz))
+               .addComponent(jButtonOtw))
+            .addContainerGap(196, Short.MAX_VALUE))
       );
       jPanelWejLayout.setVerticalGroup(
          jPanelWejLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGroup(jPanelWejLayout.createSequentialGroup()
-            .addComponent(jLabelWej)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelWejLayout.createSequentialGroup()
+            .addContainerGap()
+            .addComponent(jButtonOtw)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 176, Short.MAX_VALUE)
             .addGroup(jPanelWejLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-               .addComponent(jButtonWejWiz)
-               .addComponent(jButtonWejZap)))
+               .addComponent(jButtonWejZap)
+               .addComponent(jButtonWejWiz))
+            .addContainerGap())
       );
-      getContentPane().add(jPanelWej);
+      jTabbedPane1.addTab("Wej\u015bcie", jPanelWej);
 
-      jPanel2.setBackground(new java.awt.Color(255, 204, 204));
-      jLabel2.setText("jLabel2");
+      jButtonKonWiz.setText("Wizualizacja");
 
-      jButton2.setText("Wizualizacja");
+      jButtonKonZap.setText("Zapisz");
 
-      jButton6.setText("jButton6");
-
-      javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-      jPanel2.setLayout(jPanel2Layout);
-      jPanel2Layout.setHorizontalGroup(
-         jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
-         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-            .addGap(164, 164, 164)
-            .addComponent(jButton6)
+      javax.swing.GroupLayout jPanelKonLayout = new javax.swing.GroupLayout(jPanelKon);
+      jPanelKon.setLayout(jPanelKonLayout);
+      jPanelKonLayout.setHorizontalGroup(
+         jPanelKonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+         .addGroup(jPanelKonLayout.createSequentialGroup()
+            .addContainerGap()
+            .addComponent(jButtonKonZap)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(jButton2))
+            .addComponent(jButtonKonWiz)
+            .addContainerGap(196, Short.MAX_VALUE))
       );
-      jPanel2Layout.setVerticalGroup(
-         jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGroup(jPanel2Layout.createSequentialGroup()
-            .addComponent(jLabel2)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
-            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-               .addComponent(jButton2)
-               .addComponent(jButton6)))
+      jPanelKonLayout.setVerticalGroup(
+         jPanelKonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelKonLayout.createSequentialGroup()
+            .addContainerGap(213, Short.MAX_VALUE)
+            .addGroup(jPanelKonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+               .addComponent(jButtonKonZap)
+               .addComponent(jButtonKonWiz, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addContainerGap())
       );
-      getContentPane().add(jPanel2);
+      jTabbedPane1.addTab("Konwersja", jPanelKon);
 
-      jPanel3.setBackground(new java.awt.Color(255, 255, 204));
-      jLabel3.setText("jLabel3");
+      jButtonWyjWiz.setText("Wizualizacja");
 
-      jButton3.setText("Wizualizacja");
+      jButtonWyjZap.setText("Zapisz");
 
-      jButton7.setText("jButton7");
-
-      javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-      jPanel3.setLayout(jPanel3Layout);
-      jPanel3Layout.setHorizontalGroup(
-         jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
-         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-            .addGap(164, 164, 164)
-            .addComponent(jButton7)
+      javax.swing.GroupLayout jPanelWyjLayout = new javax.swing.GroupLayout(jPanelWyj);
+      jPanelWyj.setLayout(jPanelWyjLayout);
+      jPanelWyjLayout.setHorizontalGroup(
+         jPanelWyjLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+         .addGroup(jPanelWyjLayout.createSequentialGroup()
+            .addContainerGap()
+            .addComponent(jButtonWyjZap)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(jButton3))
+            .addComponent(jButtonWyjWiz)
+            .addContainerGap(196, Short.MAX_VALUE))
       );
-      jPanel3Layout.setVerticalGroup(
-         jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGroup(jPanel3Layout.createSequentialGroup()
-            .addComponent(jLabel3)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
-            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-               .addComponent(jButton3)
-               .addComponent(jButton7)))
+      jPanelWyjLayout.setVerticalGroup(
+         jPanelWyjLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelWyjLayout.createSequentialGroup()
+            .addContainerGap(213, Short.MAX_VALUE)
+            .addGroup(jPanelWyjLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+               .addComponent(jButtonWyjZap)
+               .addComponent(jButtonWyjWiz))
+            .addContainerGap())
       );
-      getContentPane().add(jPanel3);
+      jTabbedPane1.addTab("Wej\u015bcie", jPanelWyj);
 
-      jPanel4.setBackground(new java.awt.Color(204, 255, 204));
-      jLabel4.setText("jLabel4");
-
-      jButton4.setText("Wizualizacja");
-
-      jButton8.setText("jButton8");
-
-      javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-      jPanel4.setLayout(jPanel4Layout);
-      jPanel4Layout.setHorizontalGroup(
-         jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
-         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-            .addGap(164, 164, 164)
-            .addComponent(jButton8)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(jButton4))
-      );
-      jPanel4Layout.setVerticalGroup(
-         jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-         .addGroup(jPanel4Layout.createSequentialGroup()
-            .addComponent(jLabel4)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
-            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-               .addComponent(jButton4)
-               .addComponent(jButton8)))
-      );
-      getContentPane().add(jPanel4);
+      getContentPane().add(jTabbedPane1);
 
       pack();
    }// </editor-fold>//GEN-END:initComponents
@@ -175,22 +142,17 @@ public class Main extends javax.swing.JFrame {
   }
   
    // Variables declaration - do not modify//GEN-BEGIN:variables
-   private javax.swing.JButton jButton2;
-   private javax.swing.JButton jButton3;
-   private javax.swing.JButton jButton4;
-   private javax.swing.JButton jButton6;
-   private javax.swing.JButton jButton7;
-   private javax.swing.JButton jButton8;
+   private javax.swing.JButton jButtonKonWiz;
+   private javax.swing.JButton jButtonKonZap;
+   private javax.swing.JButton jButtonOtw;
    private javax.swing.JButton jButtonWejWiz;
    private javax.swing.JButton jButtonWejZap;
-   private javax.swing.JLabel jLabel2;
-   private javax.swing.JLabel jLabel3;
-   private javax.swing.JLabel jLabel4;
-   private javax.swing.JLabel jLabelWej;
-   private javax.swing.JPanel jPanel2;
-   private javax.swing.JPanel jPanel3;
-   private javax.swing.JPanel jPanel4;
+   private javax.swing.JButton jButtonWyjWiz;
+   private javax.swing.JButton jButtonWyjZap;
+   private javax.swing.JPanel jPanelKon;
    private javax.swing.JPanel jPanelWej;
+   private javax.swing.JPanel jPanelWyj;
+   private javax.swing.JTabbedPane jTabbedPane1;
    // End of variables declaration//GEN-END:variables
   
 }
