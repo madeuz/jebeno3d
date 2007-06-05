@@ -7,7 +7,7 @@
 
 package ste;
 import gra.*;
-import las2xyz.TLaser2xyz;
+import wej.TDaneWej;
 
 import java.util.*;
 import javax.swing.*; //do klasy TEST
@@ -21,7 +21,7 @@ public class TController {
     public TController() 
     {
         //1. Tworzê blok 1
-        fBlockAL.add(new TLaser2xyz());
+        fBlockAL.add(new TDaneWej());
         
 fBlockAL.add(new Test());
         
