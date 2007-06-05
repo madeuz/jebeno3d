@@ -1,5 +1,5 @@
 /*
- * TLaser2xyz.java
+ * TDaneWej.java
  *
  * Created on 4 czerwiec 2007, 19:38
  *
@@ -7,7 +7,7 @@
  *
  */
 
-package las2xyz;
+package wej;
 import ste.IBlock;
 
 import java.awt.*;
@@ -15,28 +15,30 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
+import java.math.BigDecimal;
 
 /**
  *
  * @author Michal
  */
-public class TLaser2xyz implements IBlock {
+public class TDaneWej implements IBlock {
     
-    private static final double VER_STEP = Math.toRadians(1); //co ile w pionie
-    private static final double HOR_STEP = Math.toRadians(1); //co ile w poziom
+    private static final double VER_STEP = 1; //co ile w pionie
+    private static final double HOR_STEP = 1; //co ile w poziom
     private final static double MAX_DIST = 8d; //metry
     private static final String SPACJA = " ";
     private double theVerStep, theHorStep, theMaxDist; //ustawienia pocz¹tkowe.
     private JSpinner theVerSpi = new JSpinner(new SpinnerNumberModel(
-                                    Math.toDegrees(VER_STEP),0,100,0.1));
+                                                        VER_STEP,0,100,0.1));
     private JSpinner theHorSpi = new JSpinner(new SpinnerNumberModel(
-                                    Math.toDegrees(HOR_STEP),0,100,0.1));
+                                                        HOR_STEP,0,100,0.1));
     private JSpinner theMaxSpi= new JSpinner(new SpinnerNumberModel(
-                                    MAX_DIST,0,100,0.1));
+                                                        MAX_DIST,0,100,0.1));
     
-    public TLaser2xyz() 
-    {
-    } //koniec konstruktora
+    //private ArrayList<TXyz> fXyzAL = new ArrayList<TXyz>();
+    private static int theMaxDistCnt = 0; //licznik ile poza zakresem
+    
+    public TDaneWej() { } //koniec konstruktora
 
     public String getTabTitle()  {   return "Dane wejœciowe";}//Laser/Gazebo ––> xyz"; }
     public JComponent getJComponent()
@@ -72,7 +74,7 @@ public class TLaser2xyz implements IBlock {
         String[] lDesc = {  "Odczyt w pionie [°]", 
                             "Odczyt w poziomie [°]",
                             "Maks. odleg³oœæ [m.]",
-                            };
+                        };
         
         int _cnt = 0; //licznik pomocniczy
         
@@ -112,6 +114,7 @@ public class TLaser2xyz implements IBlock {
     {
         //1. Sprawdzam, czy ustawienia s¹ prawid³owe. Je¿eli tak, to pobieram
         checkSettings(); 
+        if (theMaxDistCnt > 0) theMaxDistCnt = 0; //zerujê licznik odrzuconych danych
         
         //1. Odczyt pliku
         JFileChooser  lReadChF = new JFileChooser(System.getProperty("user.dir"));
@@ -135,8 +138,7 @@ public class TLaser2xyz implements IBlock {
         boolean outFlag; //info, czy uda³o siê odczytaæ plik
         try {
             //1. Zapisujê wszystko do ArrayList
-            BufferedReader br = new BufferedReader(
-                                    new FileReader(aFile));
+            BufferedReader br = new BufferedReader(new FileReader(aFile));
             String line = null;
             ArrayList<String> lLineAL = new ArrayList<String>();
             while((line = br.readLine()) != null) {
@@ -152,29 +154,37 @@ public class TLaser2xyz implements IBlock {
                 String[] linT = new String[lLineAL.size()];
                 linT = lLineAL.toArray(linT);
                 
-                //1. Kasujê podwójne spacje
                 for (int i=0; i<linT.length; i++) {
+                    //1. Kasujê podwójne spacje
                     while (linT[i].indexOf(SPACJA.concat(SPACJA)) != -1)
                         linT[i] = linT[i].replaceAll(SPACJA.concat(SPACJA), SPACJA);
                 
+                    ArrayList<TXyz> lXyzAL = null;
                     if (isLaser) ;
-                    else    analizeGazLine(linT[i].split(" "), i*theHorStep);
-                } //koniec for
-                /*
-                StringBuffer lXyzSB = analizeFile(linT);
+                    else    lXyzAL = createGazALFromLine(
+                                            linT[i].split(" "), i*theVerStep);
+                    
+                    //Zamieniam dane z fXyzAL na 3x[]
+                    double[] xT = new double[lXyzAL.size()];
+                    double[] yT = new double[xT.length];
+                    double[] zT = new double[xT.length];
+                    int _cnt = 0; //licznik pomocniczy
+                    for (TXyz xyz : lXyzAL) {
+                        xT[_cnt] = xyz.getX();
+                        yT[_cnt] = xyz.getY();
+                        zT[_cnt++] = xyz.getZ();
+                    } //koniec for xyz
+                } //koniec for i
                 
-                //String _objStr = TConvert2Obj.convert(TConvert.getCellAL());
-                 
-                String _objFileN = aFile.getName().substring(0, 
-                                                 aFile.getName().indexOf('.'));
-                writeXYZFile(_objFileN, lXyzSB.toString()); //tworzê plik xyz
-                writeFile(_objFileN, _objStr);
+                /************ dane do bloku Basi **************
+                ///BASIA.setInputData(xT, yT, zT);
                 */
+                
                 outFlag = true;
             } else {
                 showErr("Za ma³o danych");
                 outFlag = false;
-            }
+            } //koniec if-else
         } catch (FileNotFoundException err) {
             //System.err.println ("ERR_01: " + err);
             showErr("ERR_01: " + err);
@@ -196,86 +206,58 @@ public class TLaser2xyz implements IBlock {
     /************************************/
     /*  Sekcja z obrók¹ danych z Gazebo */
     /************************************/
-    private void analizeGazLine(String[] aLinT, double aHorStep) //czytam 1liniê danych z Gazebo
+    private ArrayList createGazALFromLine(String[] aLinT, double aVerStep) //czytam 1liniê danych z Gazebo
     {
-        ArrayList lxAL = new ArrayList();
+        ArrayList<TXyz> lXyzAL = new ArrayList<TXyz>();
+        
         //1. Zamieniam String na double
         double[] lVarT = new double[aLinT.length];
         for (int i=0; i<lVarT.length; i++) {
             try { lVarT[i] = Double.parseDouble(aLinT[i].trim());   }
             catch (NumberFormatException err) {
                 showErr("B³¹d w konwersji typu");
-                return;
+                return lXyzAL;
             } //koniec try-catch
         } //koniec for
         
         System.out.println("analizeGazLine aLinT.l: " + aLinT.length);
         for (int i=0; i<lVarT.length; i++) { //ca³y plik
             if (lVarT[i]<= theMaxDist) { //Spr. czy nie jest poza zakresem
-System.out.println ("Liczê lVarT[" + i + "]: " + lVarT[i] + ", poziom: " + 
-                                                    i + ", pion: " + aHorStep);
-                //double[] lXyzT = getXYZ(aVarT[i], aPtz, HOR_STEP*i);
-                /*
-                //2. Dodajê dane do SB
-                lOutSB.append(lXyzT[0]).append(" ").
-                        append(lXyzT[1]).append(" ").
-                        append(lXyzT[2]).append("\n");
-                 */
+                // Dodajê pkt do listy z pktami
+                lXyzAL.add(new TXyz(getXYZ(lVarT[i], aVerStep, theHorStep*i)));
+
             } else { //cz. za daleko
-System.out.println ("Odrzucam lVarT[" + i + "]: " + lVarT[i] + ", poziom: " + 
-                                                    i + ", pion: " + aHorStep);
-                /*
+//System.out.println ("Odrzucam lVarT[" + i + "]: " + lVarT[i] + ", poziom: " + i*theHorStep + ", pion: " + aVerStep);
                 theMaxDistCnt++; //zliczam ile poza zakresem
-                
+                /*                
                 System.out.println ("odrzucam: aVarT[" + i + "]: " + aVarT[i] + 
                                     ", aAlfa: " + Math.toDegrees(HOR_STEP*i) + 
                                     ", aPtz: " + Math.toDegrees(aPtz));
                  */
              }  //koniec if-else
         } //koniec for i
-        
-        //String _maxStr = theMaxSpi.getValue().toString();
-        //double _max = Double.parseDouble(theMaxSpi.getValue().toString());
-        
-        /*
-        //1. Zamieniam biegunowe na xyz
-        for (int i=0; i<aVarT.length; i++) {
-            if (aVarT[i]<= MAX_DIST) { //Spr. czy nie jest poza zakresem
-                double[] lXyzT = getXYZ(aVarT[i], aPtz, HOR_STEP*i);
-                //2. Dodajê dane do SB
-                lOutSB.append(lXyzT[0]).append(" ").
-                        append(lXyzT[1]).append(" ").
-                        append(lXyzT[2]).append("\n");
-            } else //cz. za daleko
-                theMaxDistCnt++; //zliczam ile poza zakresem
-                
-                System.out.println ("odrzucam: aVarT[" + i + "]: " + aVarT[i] + 
-                                    ", aAlfa: " + Math.toDegrees(HOR_STEP*i) + 
-                                    ", aPtz: " + Math.toDegrees(aPtz));
-                 
-        } //koniec for i
-*/
+        return lXyzAL;
     } //koniec analizeGazLine
     //=== koniec sekcji z obróbk¹ danych z Gazebo
     
-    /*
-    private static double[] getXYZ(double aR, double aPtz, double aAlfa)
+    private static double[] getXYZ(double aR, double aPion, double aPoziom)
     {
         double[] lOutT = new double[3]; //x, y, z
 
 
-System.out.println ("getXYZ aR: " + aR + ", aPtz: " + aPtz + ", aAlfa: " + aAlfa + 
-        ", aPtz(stopnie): " + Math.toDegrees(aPtz) + ", aAlfa: " + Math.toDegrees(aAlfa));
+System.out.println ("getXYZ aR: " + aR + ", pion: " + aPion + 
+                                                    ", aPoziom: " + aPoziom);
 
+        double lPionRad = Math.toRadians(aPion);
+        double lPoziomRad = Math.toRadians(aPoziom);
         //double _absAlfa = (aAlfa > Math.PI/2d) ? -aAlfa : aAlfa;
-        lOutT[0] = round(aR * Math.cos(aPtz) * Math.sin(aAlfa));//x
-        lOutT[2] = round(aR * Math.cos(aAlfa)); //y
-        lOutT[1] = round(aR * Math.sin(aPtz) * Math.sin(aAlfa));//h
+        lOutT[0] = round(aR * Math.cos(lPionRad) * Math.sin(lPoziomRad));//x
+        lOutT[1] = round(aR * Math.cos(lPoziomRad)); //y
+        lOutT[2] = round(aR * Math.sin(lPionRad) * Math.sin(lPoziomRad));//h
 
-        //fPixAL.add(new TPixel(lOutT[0], lOutT[2], lOutT[1]));
         return lOutT;
     } //koniec getXYZ
-      */
+
     
     //Metody pomocnicze
     public static void showErr(String aStr)
@@ -285,5 +267,10 @@ System.out.println ("getXYZ aR: " + aR + ", aPtz: " + aPtz + ", aAlfa: " + aAlfa
         System.exit(0);
     } //koniec showErr
 
-    
-} //koniec klasy TLaser2xyz
+    private static double round(double aVal)
+    {
+        BigDecimal bD = new BigDecimal(aVal); 
+        return bD.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue(); 
+    } //koniec round
+
+} //koniec klasy TDaneWej
