@@ -68,7 +68,7 @@ public class TGlowneOkno extends TBarIcon {
     private JComponent makeWindow()
     {
         JPanel jp = new JPanel(new BorderLayout());
-        jp.setBackground(Color.green);
+        //jp.setBackground(Color.green);
         //1. Tytu³
         JLabel jl = new JLabel("Tworzenie map 3D z pomiarów laserowych", JLabel.CENTER);
         jl.setFont (new Font("System", Font.BOLD, 24));
