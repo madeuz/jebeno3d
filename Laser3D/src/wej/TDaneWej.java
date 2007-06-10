@@ -47,6 +47,8 @@ public class TDaneWej implements IBlock {
     private final static String KOMENTARZ = "//"; //komentarz w oryginale
     private static final String SEPARATOR = " ";
     
+    private final static int CO_ILE_OBJ = 10; //co który pkt ma wyœwietlaæ
+    
     private double theVerStep, theHorStep, theMaxDist; //ustawienia pocz¹tkowe.
     private double theMinPion, theMaxPion; //ustawienia pocz¹tk. (tylko laser)
     private JSpinner theVerSpi = new JSpinner(new SpinnerNumberModel(
@@ -59,6 +61,9 @@ public class TDaneWej implements IBlock {
                                                         PION_MIN,0,100,0.1));
     private JSpinner thePionMaxSpi= new JSpinner(new SpinnerNumberModel(
                                                         PION_MAX,0,100,0.1));
+    private int theGraphQnt; //co ile pktów braæ do grafiki.
+    private JSpinner theGraphSpi = new JSpinner(new SpinnerNumberModel(
+                                                    CO_ILE_OBJ,1,10000,10));
     private static int theMaxDistCnt = 0; //licznik ile poza zakresem
     private static double thePionAng = 0; //k¹t obrotu lasera w pionie [stopnie]
     private String theObjFileN; //nazwa pliku .obj
@@ -88,7 +93,10 @@ public class TDaneWej implements IBlock {
 
         //2. Dodanie ustawieñ pocz¹tkowych
         jp.add(getSetP());
-        
+
+        //3. Dodanie danych do wizualizacji
+        jp.add(getObjP());
+
         return jp;
     } //koniec getJComponent
  
@@ -134,6 +142,31 @@ public class TDaneWej implements IBlock {
         return jp;
     } //koniec getSetP
     
+    private JComponent getObjP() //panel z ustawieniami do wizualizacji
+    {
+        JPanel jp = new JPanel(new GridLayout(0,2));
+        Font font = new Font("System", Font.BOLD, 16);
+        String[] lDesc = {  "Co który punkt", 
+                        };
+        
+        int _cnt = 0; //licznik pomocniczy
+        
+        //Co który punkt
+        jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
+        
+        theGraphSpi.setFont(font);
+        jp.add(theGraphSpi);
+
+        JButton objB = new JButton("Poka¿");
+        objB.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e)
+            {   TObjConfig.show(theObjFileN);   } //koniec aP
+        });
+        jp.add(objB);
+        jp.setBorder(BorderFactory.createTitledBorder("Grafika : "));
+        return jp;
+    } //koniec getObjP
+        
     private void checkSettings() //spr. i pobiera ustawienia pocz¹tkowe
     {
         try {
@@ -142,11 +175,13 @@ public class TDaneWej implements IBlock {
             theMaxDist = Double.parseDouble(theMaxDistSpi.getValue().toString());
             theMinPion = Double.parseDouble(thePionMinSpi.getValue().toString());
             theMaxPion = Double.parseDouble(thePionMaxSpi.getValue().toString());
+            theGraphQnt = Integer.parseInt(theGraphSpi.getValue().toString());
         } catch (NumberFormatException err) { //chyba niepotrzebne (?)
             showErr("B³êdne ustawienia pocz¹tkowe : " + err + 
                     "\nZostan¹ przyjête ustawienia domyœlne !");
             theVerStep = VER_STEP; theHorStep = HOR_STEP; theMaxDist =MAX_DIST;
             theMinPion = PION_MIN;  theMaxPion = PION_MAX;
+            theGraphQnt = CO_ILE_OBJ;
         } //koniec try-catch
     } //koniec checkSettings
     
@@ -159,20 +194,7 @@ public class TDaneWej implements IBlock {
         
         //2. Tworzê plik .obj
         TObjConfig.openFile(theObjFileN);
-        //---
-        /*
-TObjConfig.createFloor(0,0,100,50,-1.25); //pod³oga1
-//Tworzenie p³aszczyzn
-double[][] plT = {{0,0,0}, {0,0,20}, {10,0,20}, {10,0,0},
-                {0,50,0}, {0,50,20}, {10,50,20}, {10,50,0}};
-TObjConfig.plane(plT, true, false);
-TObjConfig.closeFile(); //zamkniêcie pliku
-TObjConfig.show(theObjFileN);
-System.out.println ("koniec");
-         */
-        //===
-
-    } //koniec crateObjFile
+    } //koniec createObjFile
     
     private void readFile(boolean isLaser) //(true-laser, false-gazebo)
     {
@@ -190,9 +212,8 @@ System.out.println ("koniec");
 
         //Odczytuje plik i zapamiêtujê wszystkie linie
         if (readFile1(_file, isLaser)) { //cz. uda³o siê odczytaæ plik  
-            //Zamykam plik .obj
-            TObjConfig.closeFile();
-TObjConfig.show(theObjFileN);
+            TObjConfig.createFloor(); //rysow. pod³ogi
+            TObjConfig.closeFile(); //Zamykam plik .obj
             JOptionPane.showMessageDialog(null, 
                 "K O N I E C !", "Koniec", JOptionPane.INFORMATION_MESSAGE);
         } else
@@ -245,9 +266,13 @@ TObjConfig.show(theObjFileN);
                     } //koniec for xyz
                     
                     //Dodajê punkt do pliku .obj
-                    for (int j=0; j<xT.length; j++)
-                        TObjConfig.cube(xT[j], yT[j], zT[j]);
-                    
+                    int _ileCnt = 0; //licznik pomocniczy
+                    for (int j=0; j<xT.length; j++) {
+                        if (_ileCnt++ % theGraphQnt == 0) { //biorê co któryœ pkt
+                            TObjConfig.setMinMax(xT[j], yT[j], zT[j]);
+                            TObjConfig.cube(xT[j], yT[j], zT[j]);
+                        } //koniec if
+                    } //koniec for j
                 } //koniec for i
                 
                 /************ dane do bloku Basi **************/
