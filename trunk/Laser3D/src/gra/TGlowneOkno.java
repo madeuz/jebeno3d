@@ -18,7 +18,7 @@ import javax.swing.*;
  */
 public class TGlowneOkno extends TBarIcon {
     
-    private final static String TITLE = "Laser 3D (9.cze.2007)";
+    private final static String TITLE = "Laser 3D (12.cze.2007)";
     private TController fControl;
     private String[] theMenuStrTab = {"Plik", "Pomoc"};
     private JMenu[] jmTab = new JMenu [theMenuStrTab.length]; 

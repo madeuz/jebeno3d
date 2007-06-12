@@ -47,7 +47,7 @@ public class TDaneWej implements IBlock {
     private final static String KOMENTARZ = "//"; //komentarz w oryginale
     private static final String SEPARATOR = " ";
     
-    private final static int CO_ILE_OBJ = 10; //co który pkt ma wyœwietlaæ
+    private final static int CO_ILE_OBJ = 100; //co który pkt ma wyœwietlaæ
     
     private double theVerStep, theHorStep, theMaxDist; //ustawienia pocz¹tkowe.
     private double theMinPion, theMaxPion; //ustawienia pocz¹tk. (tylko laser)
@@ -58,7 +58,7 @@ public class TDaneWej implements IBlock {
     private JSpinner theMaxDistSpi= new JSpinner(new SpinnerNumberModel(
                                                         MAX_DIST,0,100,0.1));
     private JSpinner thePionMinSpi= new JSpinner(new SpinnerNumberModel(
-                                                        PION_MIN,0,100,0.1));
+                                                        PION_MIN,-100,100,0.1));
     private JSpinner thePionMaxSpi= new JSpinner(new SpinnerNumberModel(
                                                         PION_MAX,0,100,0.1));
     private int theGraphQnt; //co ile pktów braæ do grafiki.
@@ -207,15 +207,16 @@ public class TDaneWej implements IBlock {
         int res = lReadChF.showDialog(null, "Wybierz plik");
         if (res == 1) return; //cz. wciœniêto CANCEL
         File _file = lReadChF.getSelectedFile();
-        
-        createObjFile(_file.getName()); //tworzy plik .obj
+        if (_file != null)
+            createObjFile(_file.getName()); //tworzy plik .obj
 
         //Odczytuje plik i zapamiêtujê wszystkie linie
         if (readFile1(_file, isLaser)) { //cz. uda³o siê odczytaæ plik  
             TObjConfig.createFloor(); //rysow. pod³ogi
             TObjConfig.closeFile(); //Zamykam plik .obj
             JOptionPane.showMessageDialog(null, 
-                "K O N I E C !", "Koniec", JOptionPane.INFORMATION_MESSAGE);
+                "K O N I E C !\nPoza zakresem: " + theMaxDistCnt + " punktów",
+                                    "Koniec", JOptionPane.INFORMATION_MESSAGE);
         } else
             JOptionPane.showMessageDialog(null, 
                     "B³¹d w odczycie pliku : " + _file,
@@ -243,7 +244,7 @@ public class TDaneWej implements IBlock {
             if (lLineAL.size() > 1) {
                 String[] linT = new String[lLineAL.size()];
                 linT = lLineAL.toArray(linT);
-                
+                int _ileCnt = 0; //licznik pomocniczy (do .obj)
                 for (int i=0; i<linT.length; i++) {
                     //1. Kasujê podwójne spacje
                     while (linT[i].indexOf(SEPARATOR.concat(SEPARATOR)) != -1)
@@ -266,7 +267,7 @@ public class TDaneWej implements IBlock {
                     } //koniec for xyz
                     
                     //Dodajê punkt do pliku .obj
-                    int _ileCnt = 0; //licznik pomocniczy
+                    //int _ileCnt = 0; //licznik pomocniczy
                     for (int j=0; j<xT.length; j++) {
                         if (_ileCnt++ % theGraphQnt == 0) { //biorê co któryœ pkt
                             TObjConfig.setMinMax(xT[j], yT[j], zT[j]);
@@ -321,14 +322,15 @@ public class TDaneWej implements IBlock {
                 for (int i=0; i<lLasT.length; i++) {
                     lLasT[i] = Double.parseDouble(lStrT[_cnt]);
                     _cnt += 2;
-                    //---
                     //Obs³ugujê tylko gdy jest dobry k¹t w poziomie
-                    if (theMinPion <= thePionAng &&  thePionAng <= theMaxPion){
+                    if (theMinPion <= thePionAng &&  thePionAng <= theMaxPion
+                            && lLasT[i]<= theMaxDist) { //Spr. czy nie jest poza zakresem
                         lXyzAL.add(new TXyz(getXYZ(lLasT[i], 
                                 Math.toDegrees(lAlfaAng), thePionAng, true)));
                         lAlfaAng += lAlfaStep; //krok bierze z pliku
-                    } //koniec if
-                    //===
+                    } else { //cz. poza zakresem
+                        theMaxDistCnt++;  //cz.ile odrzucono
+                    } //koniec if-else
                 } //koniec for
             } else if (lStrT[3].trim().equals(PTZ)) { //czyli zmiana k¹ta w pionie
                 thePionAng = Double.parseDouble(lStrT[7]);
@@ -355,7 +357,7 @@ public class TDaneWej implements IBlock {
         //1. Zamieniam String na double
         double[] lVarT = new double[aLinT.length];
         for (int i=0; i<lVarT.length; i++) {
-            try { lVarT[i] = Double.parseDouble(aLinT[i].trim());   }
+            try { lVarT[i] = Double.parseDouble(aLinT[i].replace(',', '.').trim());   }
             catch (NumberFormatException err) {
                 showErr("B³¹d w konwersji typu");
                 return lXyzAL;
@@ -370,11 +372,7 @@ public class TDaneWej implements IBlock {
 
             } else { //cz. za daleko
                 theMaxDistCnt++; //zliczam ile poza zakresem
-                /*                
-                System.out.println ("odrzucam: aVarT[" + i + "]: " + aVarT[i] + 
-                                    ", aAlfa: " + Math.toDegrees(HOR_STEP*i) + 
-                                    ", aPtz: " + Math.toDegrees(aPtz));
-                 */
+                //System.out.println ("odrzucam: lVarT[" + i + "]: " + lVarT[i]);
              }  //koniec if-else
         } //koniec for i
         return lXyzAL;
