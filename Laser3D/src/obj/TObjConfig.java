@@ -28,11 +28,12 @@ public class TObjConfig {
     //Otworzenie strumienia do zapisu.
     public static void openFile(String aFileN)
     {
+        //Kasujê min-max pod³ogi
+        theMinX=INF; theMaxX=-1*INF; theMinY=INF; theMaxY=-1*INF;
+        theMinH=INF; theMaxH=-1*INF;
+        
         File lFile = new File(checkExtention(aFileN));
-        if (lFile.exists()) {
-            System.out.println ("kasujê");
-            lFile.delete();
-        }
+        if (lFile.exists()) lFile.delete();
         try {   
             thePrintW = new PrintWriter(new BufferedWriter(
                                             new FileWriter(lFile, false)));
@@ -47,9 +48,14 @@ public class TObjConfig {
     public static void show(String aFileN)
     {
         try {
-            Runtime.getRuntime().exec("java ObjLoad " + checkExtention(aFileN));
+            Runtime.getRuntime().exec(
+                    new String[] {"cmd", "/c", "start java ObjLoad " + 
+                                                    checkExtention(aFileN)});
         } catch (IOException err) {
             JOptionPane.showMessageDialog(null, 
+                    err, "B³¹d", JOptionPane.WARNING_MESSAGE);
+        } catch (NullPointerException err) {
+             JOptionPane.showMessageDialog(null, 
                     err, "B³¹d", JOptionPane.WARNING_MESSAGE);
         } //koniec try-catch
     } //koniec show
@@ -267,14 +273,18 @@ public class TObjConfig {
     
     //Rysowanie pod³ogi
     public static void createFloor()
-    {   createFloor (theMinX, theMinY, theMaxX, theMaxY, 0);    }
+    {   
+System.out.println ("cF x: [" + theMinX + ", " + theMaxX + "]; y:[" + theMinY + ", " + theMaxY + "];");
+        
+        createFloor (theMinX, theMinY, theMaxX, theMaxY, 0);    
+        
+        line(0,0,0,0,0,1); //linia pionowa przechodz¹ca przez (0,0)
+    } //koniec createFloor
     
     public static void createFloor(double xMin, double yMin, 
                                         double xMax, double yMax, double aWys)
     {
-System.out.println ("createFloor pt1: [" + xMin + ", " + yMin + "] do [" + xMax + ", " + yMax + "]");
         if (!isDataOk(xMin, yMin, xMax, yMax, 0, 0, "pod³odze"))    return;
-System.out.println ("createFloor bbb");
         double _min = aWys;
         StringBuffer lOutSB = new StringBuffer();
         lOutSB.append("# Pod³oga\ng podloga\nusemtl red\nv ").
@@ -300,7 +310,6 @@ System.out.println ("createFloor bbb");
                 append(-4).append("\n").
                                 
                 append("s off");
-System.out.println("createFloor out: lOubSB: --|" + lOutSB + "|--");
         thePrintW.println(lOutSB);
     } //koniec createFloor
     
