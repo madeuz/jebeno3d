@@ -193,14 +193,16 @@ public class TObjConfig {
      *  |  5-------| 8
      *  1,--------4,
      */
-    public static void polygon(double[][] aPtT)
+    public static void polygon(double[][] aPtT) { polygon(aPtT, "gray"); }
+    public static void polygon(double[][] aPtT, String aColStr)
     {
         if (!isDataOk(aPtT, "wielok¹cie"))    return;
         
         if (aPtT.length != 8) return ; //za ma³o punktów
         if (aPtT[0].length != 3) return ; //za ma³o punktów
         StringBuffer outSB = new StringBuffer("# Pœcian ");
-        outSB.append("\ng pœcian\nusemtl ").append("gray").append("\n");
+        //outSB.append("\ng pœcian\nusemtl ").append("gray").append("\n");
+        outSB.append("\ng pœcian\nusemtl ").append(aColStr).append("\n");
         for (byte i=0; i<aPtT.length; i++)
             outSB.append("v ").
                     append(aPtT[i][0]).append(" ").
@@ -244,20 +246,26 @@ public class TObjConfig {
     public static void line(double aX1, double aY1, double aZ1, 
                                             double aX2, double aY2, double aZ2)
     {
+        line (aX1, aY1, aZ1, aX2, aY2, aZ2, "gray");
+    } //koniec line
+    public static void line(double aX1, double aY1, double aZ1, 
+                            double aX2, double aY2, double aZ2, String aColStr)
+    {
         if (!isDataOk(aX1, aY1, aZ1, aX2, aY2, aZ2, "linii"))    return;
         //Przedstawiam liniê jako pœcian
+        int _factor = 2;
         double[][] pT = {
-            {aX1-5*SZER_2, aY1, aZ1+5*SZER_2},
-            {aX1+5*SZER_2, aY1, aZ1+5*SZER_2},
-            {aX1-5*SZER_2, aY1, aZ1-5*SZER_2},
-            {aX1+5*SZER_2, aY1, aZ1-5*SZER_2},
+            {aX1-_factor*SZER_2, aY1, aZ1+_factor*SZER_2},
+            {aX1+_factor*SZER_2, aY1, aZ1+_factor*SZER_2},
+            {aX1-_factor*SZER_2, aY1, aZ1-_factor*SZER_2},
+            {aX1+_factor*SZER_2, aY1, aZ1-_factor*SZER_2},
             
-            {aX2-5*SZER_2, aY1, aZ2+5*SZER_2},
-            {aX2+5*SZER_2, aY1, aZ2+5*SZER_2},
-            {aX2-5*SZER_2, aY1, aZ2-5*SZER_2},
-            {aX2+5*SZER_2, aY1, aZ2-5*SZER_2},
+            {aX2-_factor*SZER_2, aY1, aZ2+_factor*SZER_2},
+            {aX2+_factor*SZER_2, aY1, aZ2+_factor*SZER_2},
+            {aX2-_factor*SZER_2, aY1, aZ2-_factor*SZER_2},
+            {aX2+_factor*SZER_2, aY1, aZ2-_factor*SZER_2},
         };
-        polygon(pT);
+        polygon(pT, aColStr);
     } //koniec line
     
     //Zapamiêtujê min i max
@@ -273,12 +281,7 @@ public class TObjConfig {
     
     //Rysowanie pod³ogi
     public static void createFloor()
-    {   
-System.out.println ("cF x: [" + theMinX + ", " + theMaxX + "]; y:[" + theMinY + ", " + theMaxY + "];");
-        
-        createFloor (theMinX, theMinY, theMaxX, theMaxY, 0);    
-        
-        line(0,0,0,0,0,1); //linia pionowa przechodz¹ca przez (0,0)
+    {   createFloor (theMinX, theMinY, theMaxX, theMaxY, 0);    
     } //koniec createFloor
     
     public static void createFloor(double xMin, double yMin, 

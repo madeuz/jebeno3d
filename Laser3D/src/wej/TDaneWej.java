@@ -67,6 +67,7 @@ public class TDaneWej implements IBlock {
     private static int theMaxDistCnt = 0; //licznik ile poza zakresem
     private static double thePionAng = 0; //k¹t obrotu lasera w pionie [stopnie]
     private String theObjFileN; //nazwa pliku .obj
+    private JCheckBox theRobPozChB = new JCheckBox("", true); //poka¿ pozycjê robota
     
     public TDaneWej() { } //koniec konstruktora
 
@@ -146,14 +147,21 @@ public class TDaneWej implements IBlock {
     {
         JPanel jp = new JPanel(new GridLayout(0,2));
         Font font = new Font("System", Font.BOLD, 16);
-        String[] lDesc = {  "Co który punkt", 
-                        };
+        String[] lDesc = {"Poka¿ pozycjê robota",
+                            "Co który punkt", 
+        };
         
         int _cnt = 0; //licznik pomocniczy
+
+        //---
+        //Poka¿ pozycjê robota
+        jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
+        jp.add(theRobPozChB);
+
+        //===
         
         //Co który punkt
         jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
-        
         theGraphSpi.setFont(font);
         jp.add(theGraphSpi);
 
@@ -213,6 +221,9 @@ public class TDaneWej implements IBlock {
         //Odczytuje plik i zapamiêtujê wszystkie linie
         if (readFile1(_file, isLaser)) { //cz. uda³o siê odczytaæ plik  
             TObjConfig.createFloor(); //rysow. pod³ogi
+            //Je¿eli zaznaczono, pokazuje pozycjê robota
+            if (theRobPozChB.isSelected())
+                TObjConfig.line(0,0,0,0,0,2, "green"); //linia pionowa przechodz¹ca przez (0,0)
             TObjConfig.closeFile(); //Zamykam plik .obj
             JOptionPane.showMessageDialog(null, 
                 "K O N I E C !\nPoza zakresem: " + theMaxDistCnt + " punktów",
