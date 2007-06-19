@@ -3,7 +3,7 @@
  *
  * Created on 6 marzec 2007, 15:06
  *
- * Klasa s�u�y do prezentacji grafiki
+ * Klasa sluly do prezentacji grafiki
  *
  */
 
@@ -18,77 +18,75 @@ import javax.swing.*;
  */
 public class TObjConfig {
     
-    private final static double INF = 999999; //niesko�czono��
-    private final static float SZER_2 = 0.01f; //p� szeroko�ci sze�cianu
+    private final static double INF = 999999; //nieskolczonoll
+    private final static float SZER_2 = 0.01f; //pl szerokolci Szescianu
     private final static String FILE_EXTENTION = ".obj";
     private static PrintWriter thePrintW;
-    private static double theMinX=INF, theMaxX=-1*INF, 
-                    theMinY=INF, theMaxY=-1*INF, theMinH=INF, theMaxH=-1*INF;
+    private static double theMinX=INF, theMaxX=-1*INF,
+            theMinY=INF, theMaxY=-1*INF, theMinH=INF, theMaxH=-1*INF;
     
     //Otworzenie strumienia do zapisu.
-    public static void openFile(String aFileN)
-    {
-        //Kasuj� min-max pod�ogi
+    public static void openFile(String aFileN) {
+        //Kasujl min-max podlogi
         theMinX=INF; theMaxX=-1*INF; theMinY=INF; theMaxY=-1*INF;
         theMinH=INF; theMaxH=-1*INF;
         
         File lFile = new File(checkExtention(aFileN));
         if (lFile.exists()) lFile.delete();
-        try {   
+        try {
             thePrintW = new PrintWriter(new BufferedWriter(
-                                            new FileWriter(lFile, false)));
-        } catch(IOException e)  {  
+                    new FileWriter(lFile, false)));
+        } catch(IOException e)  {
             System.out.println("Blad 1: " + e);
         } //koniec try-catch
     } //koniec openFile
     
-    public static void closeFile()
-    {   thePrintW.close();  }
+    public static void closeFile() {
+        thePrintW.close();  }
     
-    public static void show(String aFileN)
-    {
+    public static void show(String aFileN) {
         try {
-           if(System.getProperty("os.name").trim().startsWith("Linux") ){
-           
-           }else
-            Runtime.getRuntime().exec(
-                    new String[] {"cmd", "/c", "start java ObjLoad " + 
-                                                    checkExtention(aFileN)});
+            if(System.getProperty("os.name").trim().startsWith("Linux") ){
+                
+            } else {
+                Runtime.getRuntime().exec(
+                        new String[] {"cmd", "/c", "start java ObjLoad " +
+                                checkExtention(aFileN)});
+            } //konic try-catch
         } catch (IOException err) {
-            JOptionPane.showMessageDialog(null, 
-                    err, "B��d", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    err, "Blad", JOptionPane.WARNING_MESSAGE);
         } catch (NullPointerException err) {
-             JOptionPane.showMessageDialog(null, 
-                    err, "B��d", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    err, "Blad", JOptionPane.WARNING_MESSAGE);
         } //koniec try-catch
     } //koniec show
     
-    public static void plane(double[][] aPtT, boolean aLeftF, boolean aRightF)
-    {
-        if (!isDataOk(aPtT, "p�aszczy�nie"))    return;
-        StringBuffer outSB = new StringBuffer("# P�aszczyzna\ng Plaszczyzna\nusemtl "). 
-                                            append("gray").append("\n");
-        //Dodaj� punkty
+    public static void plane(double[][] aPtT, boolean aLeftF, boolean aRightF) {
+        if (!isDataOk(aPtT, "plaszczylnie"))    return;
+        StringBuffer outSB = new StringBuffer("# Plaszczyzna\ng Plaszczyzna\nusemtl ").
+                append("gray").append("\n");
+        //Dodajl punkty
         for (int i=0; i<aPtT.length; i++) {
             outSB.append("v ").append(aPtT[i][0]).append(" ").
-                                append(aPtT[i][1]).append(" ").
-                                append(aPtT[i][2]).append("\n");
+                    append(aPtT[i][1]).append(" ").
+                    append(aPtT[i][2]).append("\n");
         } //koniec for i
-        //Dodaj� �ciany
+        //Dodajl lciany
         if (aLeftF)
             outSB.append("f ").
-                append(-1).append(" ").
-                append(-2).append(" ").
-                append(-3).append(" ").
-                append(-4).append("\n");
+                    append(-1).append(" ").
+                    append(-2).append(" ").
+                    append(-3).append(" ").
+                    append(-4).append("\n");
         
         if (aRightF)
             outSB.append("f ").
-                append(-1).append(" ").
-                append(-4).append(" ").
-                append(-3).append(" ").
-                append(-2).append("\n");
-                
+                    append(-1).append(" ").
+                    append(-4).append(" ").
+                    append(-3).append(" ").
+                    append(-2).append("\n");
+        
         thePrintW.println(outSB);
     } //koniec plane
     
@@ -100,26 +98,25 @@ public class TObjConfig {
      *  |  5-------| 8
      *  1,--------4,
      */
-    //Zwraca opis sze�cianu
-    public static void cube(double aX, double aY, double aH)
-    {   cube(aX, aY, aH, SZER_2);  } //domy�lny rozmiar sze�cianu
+    //Zwraca opis Szescianu
+    public static void cube(double aX, double aY, double aH) {
+        cube(aX, aY, aH, SZER_2);  } //domyllny rozmiar Szescianu
     
-    public static void cube(double aX, double aY, double aH, double aSzer_2)
-    {
-        if (!isDataOk(aX, aY, aH, aSzer_2, 0, 0, "sze�cianie"))    return;
+    public static void cube(double aX, double aY, double aH, double aSzer_2) {
+        if (!isDataOk(aX, aY, aH, aSzer_2, 0, 0, "Szescianie"))    return;
         
-        //Obliczam pkty sze�cianu
+        //Obliczam pkty Szescianu
         double minX, maxX, minY, maxY, minH, maxH;
         minX = aX-aSzer_2; maxX = aX+aSzer_2;
         minY = aY-aSzer_2; maxY = aY+aSzer_2;
         minH = aH-aSzer_2; maxH = aH+aSzer_2;
         
-        //outSB.append("# Pod�oga\ng podloga\nusemtl red\nv ").
+        //outSB.append("# Podloga\ng podloga\nusemtl red\nv ").
         //StringBuffer outSB = new StringBuffer("# Punkt").append("\nv ").
-        StringBuffer outSB = new StringBuffer("# Sze�cian\ng punkt\nusemtl "). 
-                                            append("gray").append("\nv ").
-                                            //append(aKolStr).append("\nv ").
-        
+        StringBuffer outSB = new StringBuffer("# Szescian\ng punkt\nusemtl ").
+                append("gray").append("\nv ").
+                //append(aKolStr).append("\nv ").
+                
                 append(minX).append(" "). //PKT 1
                 append(minY).append(" ").
                 append(minH).append("\nv ").
@@ -156,7 +153,7 @@ public class TObjConfig {
                 append(-4).append(" ").
                 append(-3).append(" ").
                 append(-2).append("\nf ").
-        
+                
                 append(-5).append(" "). //LEWA SCIANA
                 append(-6).append(" ").
                 append(-7).append(" ").
@@ -181,11 +178,11 @@ public class TObjConfig {
                 append(-3).append(" ").
                 append(-7).append(" ").
                 append(-6).append("\n");
-                
-                //append("s off"); //po co to jest ???
+        
+        //append("s off"); //po co to jest ???
         thePrintW.println(outSB);
     } //koniec cube
-
+    
     /* punkty:
      *     6---------7
      *  2,--------3, |
@@ -197,65 +194,62 @@ public class TObjConfig {
      *  1,--------4,
      */
     public static void polygon(double[][] aPtT) { polygon(aPtT, "gray"); }
-    public static void polygon(double[][] aPtT, String aColStr)
-    {
-        if (!isDataOk(aPtT, "wielok�cie"))    return;
+    public static void polygon(double[][] aPtT, String aColStr) {
+        if (!isDataOk(aPtT, "wielokacie"))    return;
         
-        if (aPtT.length != 8) return ; //za ma�o punkt�w
-        if (aPtT[0].length != 3) return ; //za ma�o punkt�w
-        StringBuffer outSB = new StringBuffer("# P�cian ");
-        //outSB.append("\ng p�cian\nusemtl ").append("gray").append("\n");
-        outSB.append("\ng p�cian\nusemtl ").append(aColStr).append("\n");
+        if (aPtT.length != 8) return ; //za malo punktlw
+        if (aPtT[0].length != 3) return ; //za malo punktlw
+        StringBuffer outSB = new StringBuffer("# Plcian ");
+        //outSB.append("\ng plcian\nusemtl ").append("gray").append("\n");
+        outSB.append("\ng plcian\nusemtl ").append(aColStr).append("\n");
         for (byte i=0; i<aPtT.length; i++)
             outSB.append("v ").
                     append(aPtT[i][0]).append(" ").
                     append(aPtT[i][1]).append(" ").
                     append(aPtT[i][2]).append("\n");
-                
+        
         outSB.append("f ").
                 append(-1).append(" "). //PRAWA SCIANA
                 append(-4).append(" ").
                 append(-3).append(" ").
                 append(-2).append("\nf ").
-
+                
                 append(-5).append(" "). //LEWA SCIANA
                 append(-6).append(" ").
                 append(-7).append(" ").
                 append(-8).append("\nf ").
-
+                
                 append(-1).append(" "). //GORA
                 append(-2).append(" ").
                 append(-6).append(" ").
                 append(-5).append("\nf ").
-
+                
                 append(-3).append(" "). //DOL
                 append(-4).append(" ").
                 append(-8).append(" ").
                 append(-7).append("\nf ").
-
+                
                 append(-1).append(" "). //PRZOD
                 append(-5).append(" ").
                 append(-8).append(" ").
                 append(-4).append("\nf ").
-
+                
                 append(-2).append(" "). //TYL
                 append(-3).append(" ").
                 append(-7).append(" ").
                 append(-6).append("\n");
-                
+        
         thePrintW.println(outSB);
     } //koniec polygon
     
-    public static void line(double aX1, double aY1, double aZ1, 
-                                            double aX2, double aY2, double aZ2)
-    {
-        line (aX1, aY1, aZ1, aX2, aY2, aZ2, "gray");
+    public static void line(double aX1, double aY1, double aZ1,
+            double aX2, double aY2, double aZ2) {
+        line(aX1, aY1, aZ1, aX2, aY2, aZ2, "gray");
     } //koniec line
-    public static void line(double aX1, double aY1, double aZ1, 
-                            double aX2, double aY2, double aZ2, String aColStr)
-    {
+    public static void line(double aX1, double aY1, double aZ1,
+            double aX2, double aY2, double aZ2, String aColStr) {
         if (!isDataOk(aX1, aY1, aZ1, aX2, aY2, aZ2, "linii"))    return;
-        //Przedstawiam lini� jako p�cian
+        //Przedstawiam linil jako plcian
         int _factor = 2;
         double[][] pT = {
             {aX1-_factor*SZER_2, aY1, aZ1+_factor*SZER_2},
@@ -271,9 +265,8 @@ public class TObjConfig {
         polygon(pT, aColStr);
     } //koniec line
     
-    //Zapami�tuj� min i max
-    public static void setMinMax (double aX, double aY, double aH)
-    {
+    //Zapamiltujl min i max
+    public static void setMinMax(double aX, double aY, double aH) {
         if (aX < theMinX)   theMinX = aX;
         if (aX > theMaxX)   theMaxX = aX;
         if (aY < theMinY)   theMinY = aY;
@@ -282,18 +275,17 @@ public class TObjConfig {
         if (aH > theMaxH)   theMaxH = aH;
     } //koniec setMinMax
     
-    //Rysowanie pod�ogi
-    public static void createFloor()
-    {   createFloor (theMinX, theMinY, theMaxX, theMaxY, 0);    
+    //Rysowanie podlogi
+    public static void createFloor() {
+        createFloor(theMinX, theMinY, theMaxX, theMaxY, 0);
     } //koniec createFloor
     
-    public static void createFloor(double xMin, double yMin, 
-                                        double xMax, double yMax, double aWys)
-    {
-        if (!isDataOk(xMin, yMin, xMax, yMax, 0, 0, "pod�odze"))    return;
+    public static void createFloor(double xMin, double yMin,
+            double xMax, double yMax, double aWys) {
+        if (!isDataOk(xMin, yMin, xMax, yMax, 0, 0, "podlodze"))    return;
         double _min = aWys;
         StringBuffer lOutSB = new StringBuffer();
-        lOutSB.append("# Pod�oga\ng podloga\nusemtl red\nv ").
+        lOutSB.append("# Podloga\ng podloga\nusemtl red\nv ").
                 append(xMin).append(" ").
                 append(yMin).append(" ").
                 append(_min).append("\nv ").
@@ -301,7 +293,7 @@ public class TObjConfig {
                 append(xMin).append(" ").
                 append(yMax).append(" ").
                 append(_min).append("\nv ").
-
+                
                 append(xMax).append(" ").
                 append(yMax).append(" ").
                 append(_min).append("\nv ").
@@ -314,31 +306,29 @@ public class TObjConfig {
                 append(-2).append(" ").
                 append(-3).append(" ").
                 append(-4).append("\n").
-                                
+                
                 append("s off");
         thePrintW.println(lOutSB);
     } //koniec createFloor
     
     //Sprawdzenie i ewentualnie dopisanie rozszerzenia
-    public static String checkExtention (String aStr)
-    {
+    public static String checkExtention(String aStr) {
         if (!aStr.endsWith(FILE_EXTENTION))
             aStr = aStr.concat(FILE_EXTENTION);
         return aStr;
     } //koniec checkExtention
     
-    private static boolean isDataOk(double[][] aT, String aGdzie)
-    {
+    private static boolean isDataOk(double[][] aT, String aGdzie) {
         for (int i=0; i<aT.length; i++) {
             for (int j=0; j<aT[i].length; j++) {
                 if (Double.isNaN(aT[i][j])) {
-                    JOptionPane.showMessageDialog(null, "Jedna z warto�ci jest NaN "
-                            + "w " + aGdzie, "GRAFIKA", 
+                    JOptionPane.showMessageDialog(null, "Jedna z wartosci jest NaN "
+                            + "w " + aGdzie, "GRAFIKA",
                             JOptionPane.ERROR_MESSAGE);
                     return false;
                 } else if (Double.isInfinite(aT[i][j])) {
-                    JOptionPane.showMessageDialog(null, "Jedna z warto�ci jest niesko�czono�ci� "
-                            + "w " + aGdzie, "GRAFIKA", 
+                    JOptionPane.showMessageDialog(null, "Jedna z wartosci jest nieskonczonoscia "
+                            + "w " + aGdzie, "GRAFIKA",
                             JOptionPane.ERROR_MESSAGE);
                     return false;
                 } //koniec if
@@ -347,21 +337,20 @@ public class TObjConfig {
         return true;
     } //koniec isDataOk
     
-    private static boolean isDataOk(double aP1, double aP2, double aP3, 
-                                    double aP4, double aP5, double aP6,
-                                                            String aGdzie)
-    {
-        if (Double.isNaN(aP1) || Double.isNaN(aP2) || Double.isNaN(aP3) || 
+    private static boolean isDataOk(double aP1, double aP2, double aP3,
+            double aP4, double aP5, double aP6,
+            String aGdzie) {
+        if (Double.isNaN(aP1) || Double.isNaN(aP2) || Double.isNaN(aP3) ||
                 Double.isNaN(aP4) || Double.isNaN(aP5) || Double.isNaN(aP6)) {
-            JOptionPane.showMessageDialog(null, "Jedna z warto�ci jest NaN "
-                            + "w " + aGdzie, "GRAFIKA", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Jedna z wartosci jest NaN "
+                    + "w " + aGdzie, "GRAFIKA", JOptionPane.ERROR_MESSAGE);
             return false;
             
-        } else if (Double.isInfinite(aP1) || Double.isInfinite(aP2) || 
-                            Double.isInfinite(aP3) || Double.isInfinite(aP4) || 
-                            Double.isInfinite(aP5) || Double.isInfinite(aP6)) {
-            JOptionPane.showMessageDialog(null, "Jedna z warto�ci jest niesko�czono�ci� "
-                            + "w " + aGdzie, "GRAFIKA", JOptionPane.ERROR_MESSAGE);
+        } else if (Double.isInfinite(aP1) || Double.isInfinite(aP2) ||
+                Double.isInfinite(aP3) || Double.isInfinite(aP4) ||
+                Double.isInfinite(aP5) || Double.isInfinite(aP6)) {
+            JOptionPane.showMessageDialog(null, "Jedna z wartosci jest nieskonczonoscia "
+                    + "w " + aGdzie, "GRAFIKA", JOptionPane.ERROR_MESSAGE);
             return false;
         } //koniec if-else
         return true;
