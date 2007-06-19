@@ -3,7 +3,7 @@
  *
  * Created on 6 marzec 2007, 15:06
  *
- * Klasa s³u¿y do prezentacji grafiki
+ * Klasa sï¿½uï¿½y do prezentacji grafiki
  *
  */
 
@@ -18,8 +18,8 @@ import javax.swing.*;
  */
 public class TObjConfig {
     
-    private final static double INF = 999999; //nieskoñczonoœæ
-    private final static float SZER_2 = 0.01f; //pó³ szerokoœci szeœcianu
+    private final static double INF = 999999; //nieskoï¿½czonoï¿½ï¿½
+    private final static float SZER_2 = 0.01f; //pï¿½ szerokoï¿½ci szeï¿½cianu
     private final static String FILE_EXTENTION = ".obj";
     private static PrintWriter thePrintW;
     private static double theMinX=INF, theMaxX=-1*INF, 
@@ -28,7 +28,7 @@ public class TObjConfig {
     //Otworzenie strumienia do zapisu.
     public static void openFile(String aFileN)
     {
-        //Kasujê min-max pod³ogi
+        //Kasujï¿½ min-max podï¿½ogi
         theMinX=INF; theMaxX=-1*INF; theMinY=INF; theMaxY=-1*INF;
         theMinH=INF; theMaxH=-1*INF;
         
@@ -48,30 +48,33 @@ public class TObjConfig {
     public static void show(String aFileN)
     {
         try {
+           if(System.getProperty("os.name").trim().startsWith("Linux") ){
+           
+           }else
             Runtime.getRuntime().exec(
                     new String[] {"cmd", "/c", "start java ObjLoad " + 
                                                     checkExtention(aFileN)});
         } catch (IOException err) {
             JOptionPane.showMessageDialog(null, 
-                    err, "B³¹d", JOptionPane.WARNING_MESSAGE);
+                    err, "Bï¿½ï¿½d", JOptionPane.WARNING_MESSAGE);
         } catch (NullPointerException err) {
              JOptionPane.showMessageDialog(null, 
-                    err, "B³¹d", JOptionPane.WARNING_MESSAGE);
+                    err, "Bï¿½ï¿½d", JOptionPane.WARNING_MESSAGE);
         } //koniec try-catch
     } //koniec show
     
     public static void plane(double[][] aPtT, boolean aLeftF, boolean aRightF)
     {
-        if (!isDataOk(aPtT, "p³aszczyŸnie"))    return;
-        StringBuffer outSB = new StringBuffer("# P³aszczyzna\ng Plaszczyzna\nusemtl "). 
+        if (!isDataOk(aPtT, "pï¿½aszczyï¿½nie"))    return;
+        StringBuffer outSB = new StringBuffer("# Pï¿½aszczyzna\ng Plaszczyzna\nusemtl "). 
                                             append("gray").append("\n");
-        //Dodajê punkty
+        //Dodajï¿½ punkty
         for (int i=0; i<aPtT.length; i++) {
             outSB.append("v ").append(aPtT[i][0]).append(" ").
                                 append(aPtT[i][1]).append(" ").
                                 append(aPtT[i][2]).append("\n");
         } //koniec for i
-        //Dodajê œciany
+        //Dodajï¿½ ï¿½ciany
         if (aLeftF)
             outSB.append("f ").
                 append(-1).append(" ").
@@ -97,23 +100,23 @@ public class TObjConfig {
      *  |  5-------| 8
      *  1,--------4,
      */
-    //Zwraca opis szeœcianu
+    //Zwraca opis szeï¿½cianu
     public static void cube(double aX, double aY, double aH)
-    {   cube(aX, aY, aH, SZER_2);  } //domyœlny rozmiar szeœcianu
+    {   cube(aX, aY, aH, SZER_2);  } //domyï¿½lny rozmiar szeï¿½cianu
     
     public static void cube(double aX, double aY, double aH, double aSzer_2)
     {
-        if (!isDataOk(aX, aY, aH, aSzer_2, 0, 0, "szeœcianie"))    return;
+        if (!isDataOk(aX, aY, aH, aSzer_2, 0, 0, "szeï¿½cianie"))    return;
         
-        //Obliczam pkty szeœcianu
+        //Obliczam pkty szeï¿½cianu
         double minX, maxX, minY, maxY, minH, maxH;
         minX = aX-aSzer_2; maxX = aX+aSzer_2;
         minY = aY-aSzer_2; maxY = aY+aSzer_2;
         minH = aH-aSzer_2; maxH = aH+aSzer_2;
         
-        //outSB.append("# Pod³oga\ng podloga\nusemtl red\nv ").
+        //outSB.append("# Podï¿½oga\ng podloga\nusemtl red\nv ").
         //StringBuffer outSB = new StringBuffer("# Punkt").append("\nv ").
-        StringBuffer outSB = new StringBuffer("# Szeœcian\ng punkt\nusemtl "). 
+        StringBuffer outSB = new StringBuffer("# Szeï¿½cian\ng punkt\nusemtl "). 
                                             append("gray").append("\nv ").
                                             //append(aKolStr).append("\nv ").
         
@@ -196,13 +199,13 @@ public class TObjConfig {
     public static void polygon(double[][] aPtT) { polygon(aPtT, "gray"); }
     public static void polygon(double[][] aPtT, String aColStr)
     {
-        if (!isDataOk(aPtT, "wielok¹cie"))    return;
+        if (!isDataOk(aPtT, "wielokï¿½cie"))    return;
         
-        if (aPtT.length != 8) return ; //za ma³o punktów
-        if (aPtT[0].length != 3) return ; //za ma³o punktów
-        StringBuffer outSB = new StringBuffer("# Pœcian ");
-        //outSB.append("\ng pœcian\nusemtl ").append("gray").append("\n");
-        outSB.append("\ng pœcian\nusemtl ").append(aColStr).append("\n");
+        if (aPtT.length != 8) return ; //za maï¿½o punktï¿½w
+        if (aPtT[0].length != 3) return ; //za maï¿½o punktï¿½w
+        StringBuffer outSB = new StringBuffer("# Pï¿½cian ");
+        //outSB.append("\ng pï¿½cian\nusemtl ").append("gray").append("\n");
+        outSB.append("\ng pï¿½cian\nusemtl ").append(aColStr).append("\n");
         for (byte i=0; i<aPtT.length; i++)
             outSB.append("v ").
                     append(aPtT[i][0]).append(" ").
@@ -252,7 +255,7 @@ public class TObjConfig {
                             double aX2, double aY2, double aZ2, String aColStr)
     {
         if (!isDataOk(aX1, aY1, aZ1, aX2, aY2, aZ2, "linii"))    return;
-        //Przedstawiam liniê jako pœcian
+        //Przedstawiam liniï¿½ jako pï¿½cian
         int _factor = 2;
         double[][] pT = {
             {aX1-_factor*SZER_2, aY1, aZ1+_factor*SZER_2},
@@ -268,7 +271,7 @@ public class TObjConfig {
         polygon(pT, aColStr);
     } //koniec line
     
-    //Zapamiêtujê min i max
+    //Zapamiï¿½tujï¿½ min i max
     public static void setMinMax (double aX, double aY, double aH)
     {
         if (aX < theMinX)   theMinX = aX;
@@ -279,7 +282,7 @@ public class TObjConfig {
         if (aH > theMaxH)   theMaxH = aH;
     } //koniec setMinMax
     
-    //Rysowanie pod³ogi
+    //Rysowanie podï¿½ogi
     public static void createFloor()
     {   createFloor (theMinX, theMinY, theMaxX, theMaxY, 0);    
     } //koniec createFloor
@@ -287,10 +290,10 @@ public class TObjConfig {
     public static void createFloor(double xMin, double yMin, 
                                         double xMax, double yMax, double aWys)
     {
-        if (!isDataOk(xMin, yMin, xMax, yMax, 0, 0, "pod³odze"))    return;
+        if (!isDataOk(xMin, yMin, xMax, yMax, 0, 0, "podï¿½odze"))    return;
         double _min = aWys;
         StringBuffer lOutSB = new StringBuffer();
-        lOutSB.append("# Pod³oga\ng podloga\nusemtl red\nv ").
+        lOutSB.append("# Podï¿½oga\ng podloga\nusemtl red\nv ").
                 append(xMin).append(" ").
                 append(yMin).append(" ").
                 append(_min).append("\nv ").
@@ -329,12 +332,12 @@ public class TObjConfig {
         for (int i=0; i<aT.length; i++) {
             for (int j=0; j<aT[i].length; j++) {
                 if (Double.isNaN(aT[i][j])) {
-                    JOptionPane.showMessageDialog(null, "Jedna z wartoœci jest NaN "
+                    JOptionPane.showMessageDialog(null, "Jedna z wartoï¿½ci jest NaN "
                             + "w " + aGdzie, "GRAFIKA", 
                             JOptionPane.ERROR_MESSAGE);
                     return false;
                 } else if (Double.isInfinite(aT[i][j])) {
-                    JOptionPane.showMessageDialog(null, "Jedna z wartoœci jest nieskoñczonoœci¹ "
+                    JOptionPane.showMessageDialog(null, "Jedna z wartoï¿½ci jest nieskoï¿½czonoï¿½ciï¿½ "
                             + "w " + aGdzie, "GRAFIKA", 
                             JOptionPane.ERROR_MESSAGE);
                     return false;
@@ -350,14 +353,14 @@ public class TObjConfig {
     {
         if (Double.isNaN(aP1) || Double.isNaN(aP2) || Double.isNaN(aP3) || 
                 Double.isNaN(aP4) || Double.isNaN(aP5) || Double.isNaN(aP6)) {
-            JOptionPane.showMessageDialog(null, "Jedna z wartoœci jest NaN "
+            JOptionPane.showMessageDialog(null, "Jedna z wartoï¿½ci jest NaN "
                             + "w " + aGdzie, "GRAFIKA", JOptionPane.ERROR_MESSAGE);
             return false;
             
         } else if (Double.isInfinite(aP1) || Double.isInfinite(aP2) || 
                             Double.isInfinite(aP3) || Double.isInfinite(aP4) || 
                             Double.isInfinite(aP5) || Double.isInfinite(aP6)) {
-            JOptionPane.showMessageDialog(null, "Jedna z wartoœci jest nieskoñczonoœci¹ "
+            JOptionPane.showMessageDialog(null, "Jedna z wartoï¿½ci jest nieskoï¿½czonoï¿½ciï¿½ "
                             + "w " + aGdzie, "GRAFIKA", JOptionPane.ERROR_MESSAGE);
             return false;
         } //koniec if-else
