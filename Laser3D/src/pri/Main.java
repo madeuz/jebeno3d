@@ -7,6 +7,8 @@
 
 package pri;
 
+import java.util.Properties;
+
 /**
  *
  * @author mignat
@@ -20,7 +22,11 @@ public class Main {
     //2007.06.12    4h     24h  MG
     
     public static void main(String[] args) 
-    {   
+    {   Properties p = System.getProperties();
+        p.list(System.out);
+        System.out.println("-->" + p.getProperty("os.name") + "<---" );
+        
+        System.exit(0);
         javax.swing.SwingUtilities.invokeLater (new Runnable() {
             public void run() {new ste.TController(); }
         });
