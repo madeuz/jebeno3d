@@ -16,13 +16,13 @@ public class TAboutProgramme extends TAbstractAbout { //JPanel {
     private static JFrame frame;
     private String[] theOpis = {
                         "POLSKA AKADEMIA NAUK",
-                        "Instytut Podstawowych Problemów Techniki",
+                        "Instytut Podstawowych Problemow Techniki",
                         "Zak³ad Technologii Inteligentych",
-                        "Zespó³ Systemów Inteligentnych",
+                        "Zespo³ Systemow Inteligentnych",
                     };
 
     private String[] theProgramme = {
-        "Tworzenie map 3D z pomiarów laserowych",
+        "Tworzenie map 3D z pomiarow laserowych",
         "kompilacja: czerwiec 2007",
     };
     
@@ -65,14 +65,14 @@ public class TAboutProgramme extends TAbstractAbout { //JPanel {
     /************************/
     public static void createWindow()
     {
-        if (frame != null && frame.isShowing()) { //czyli okno jest ju¿ otwarte
+        if (frame != null && frame.isShowing()) { //czyli okno jest juz otwarte
             frame.toFront();
             return;
         } //koniec if (frame != null)
         JFrame.setDefaultLookAndFeelDecorated(true);
         frame = new TBarIcon("O programie . . .");
         frame.setAlwaysOnTop(true);
-        frame.setResizable(false); //nie mo¿na zmieniaæ rozmiarów okna
+        frame.setResizable(false); //nie mozna zmieniaæ rozmiarow okna
         JFrame.setDefaultLookAndFeelDecorated(false);
         //frame.setLocation (tgo.getLocation().x+25, tgo.getLocation().y+40);
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -94,9 +94,9 @@ public class TAboutProgramme extends TAbstractAbout { //JPanel {
 
 class TAuthor extends TAbstractAbout {
     protected static JFrame frame;
-    private static byte theMignatCnt = 0; //do pokazywania któregoœ okienka
+    private static byte theMignatCnt = 0; //do pokazywania ktoregos okienka
     private String[] theMG = {"Micha³ Gnatowski", "IPPT PAN" };
-    private String[] theBS = {"Barbara Siemi¹tkowska"};
+    private String[] theBS = {"Barbara Siemiatkowska"};
     private String[] theAZ = {"Arkadiusz Zychewicz"};
     TAuthor ()
     {
@@ -123,14 +123,14 @@ class TAuthor extends TAbstractAbout {
     /************************/
     public static void createWindow()
     {
-        if (frame != null && frame.isShowing()) { //czyli okno jest ju¿ otwarte
+        if (frame != null && frame.isShowing()) { //czyli okno jest juz otwarte
             frame.toFront();
             return;
         } //koniec if (frame != null)
         JFrame.setDefaultLookAndFeelDecorated(true);
         frame = new TBarIcon("Autorzy");
         frame.setAlwaysOnTop(true);
-        frame.setResizable(false); //nie mo¿na zmieniaæ rozmiarów okna
+        frame.setResizable(false); //nie mozna zmieniaæ rozmiarow okna
         JFrame.setDefaultLookAndFeelDecorated(false);
         //frame.setLocation (tgo.getLocation().x+25, tgo.getLocation().y+40);
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -168,10 +168,10 @@ abstract class TAbstractAbout extends JPanel {
         JPanel jp1 = new JPanel(); //otoczka dla j11
         JPanel jp11 = new JPanel(new BorderLayout());
         JPanel jp111 = new JPanel(new GridLayout(0,1,0,5));
-        if (aIconNameL != null) //czyli jest jakaœ ikona
+        if (aIconNameL != null) //czyli jest jakas ikona
             jp.add (new JLabel(getIcon(aIconNameL), JLabel.CENTER),
                     BorderLayout.WEST);
-        if (aIconNameR != null) //czyli jest jakaœ ikona
+        if (aIconNameR != null) //czyli jest jakas ikona
             jp.add (new JLabel(getIcon(aIconNameR), JLabel.CENTER),
                     BorderLayout.EAST);
         for (byte i=0; i<aStrTab.length; i++) {	

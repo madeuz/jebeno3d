@@ -8,11 +8,11 @@
  * Format z lasera :
  *
  * Y
- * /\  -Z (w ty³)
+ * /\  -Z (w tyl)
  * |  /
  * | /
  * |/
- * ------> X (robot stoi wzd³ó¿ osi X)
+ * ------> X (robot stoi wzdloz osi X)
  *
  */
 
@@ -37,20 +37,20 @@ public class TDaneWej implements IBlock {
     private static final double HOR_STEP = 1; //co ile w poziom
     private final static double MAX_DIST = 8d; //metry
     
-    private final static int PION_MIN = 0; //min. k¹t w poziomie
-    private final static int PION_MAX = 90;  //max k¹t w poziomie
+    private final static int PION_MIN = 0; //min. kat w poziomie
+    private final static int PION_MAX = 90;  //max kat w poziomie
 
     private final static String LASER = "laser";
     private final static String PTZ = "ptz";
-    private final static int ILE_LASER = 181; //ile pktów z lasera w 1. linii
+    private final static int ILE_LASER = 181; //ile pktow z lasera w 1. linii
 
     private final static String KOMENTARZ = "//"; //komentarz w oryginale
     private static final String SEPARATOR = " ";
     
-    private final static int CO_ILE_OBJ = 100; //co który pkt ma wyœwietlaæ
+    private final static int CO_ILE_OBJ = 100; //co ktory pkt ma wyswietlac
     
-    private double theVerStep, theHorStep, theMaxDist; //ustawienia pocz¹tkowe.
-    private double theMinPion, theMaxPion; //ustawienia pocz¹tk. (tylko laser)
+    private double theVerStep, theHorStep, theMaxDist; //ustawienia poczatkowe.
+    private double theMinPion, theMaxPion; //ustawienia poczatk. (tylko laser)
     private JSpinner theVerSpi = new JSpinner(new SpinnerNumberModel(
                                                         VER_STEP,0,100,0.1));
     private JSpinner theHorSpi = new JSpinner(new SpinnerNumberModel(
@@ -61,24 +61,26 @@ public class TDaneWej implements IBlock {
                                                         PION_MIN,-100,100,0.1));
     private JSpinner thePionMaxSpi= new JSpinner(new SpinnerNumberModel(
                                                         PION_MAX,0,100,0.1));
-    private int theGraphQnt; //co ile pktów braæ do grafiki.
+    private int theGraphQnt; //co ile pktow brac do grafiki.
     private JSpinner theGraphSpi = new JSpinner(new SpinnerNumberModel(
                                                     CO_ILE_OBJ,1,10000,10));
     private static int theMaxDistCnt = 0; //licznik ile poza zakresem
-    private static double thePionAng = 0; //k¹t obrotu lasera w pionie [stopnie]
+    private static double thePionAng = 0; //kat obrotu lasera w pionie [stopnie]
     private String theObjFileN; //nazwa pliku .obj
-    private JCheckBox theRobPozChB = new JCheckBox("", true); //poka¿ pozycjê robota
+    private JCheckBox theRobPozChB = new JCheckBox("", true); //pokaz pozycje robota
+    private IBlock theNext;
     
     public TDaneWej() { } //koniec konstruktora
 
-    public String getTabTitle()  {   return "Dane wejœciowe";}//Laser/Gazebo ––> xyz"; }
+    public void setNext(IBlock aN)  {   theNext = aN;   } //koniec setNext
+    public String getTabTitle()  {   return "Dane wejsciowe";}//Laser/Gazebo ––> xyz"; }
     public JComponent getJComponent()
     {
         JPanel jp = new JPanel();
         jp.setBackground(Color.orange);
         
-        //1. Dodanie przycisków (laser i Gazebo)
-        JPanel jpB = new JPanel (new GridLayout(2,1,10,10)); //do przycisków
+        //1. Dodanie przyciskow (laser i Gazebo)
+        JPanel jpB = new JPanel (new GridLayout(2,1,10,10)); //do przyciskow
         JButton lasB = new JButton("Wczytaj plik z lasera");
         lasB.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e) { readFile(true); }
@@ -92,7 +94,7 @@ public class TDaneWej implements IBlock {
         jpB.add(gazB);
         jp.add(jpB);
 
-        //2. Dodanie ustawieñ pocz¹tkowych
+        //2. Dodanie ustawieñ poczatkowych
         jp.add(getSetP());
 
         //3. Dodanie danych do wizualizacji
@@ -101,15 +103,15 @@ public class TDaneWej implements IBlock {
         return jp;
     } //koniec getJComponent
  
-    private JComponent getSetP() //panel z ustawieniami pocz¹tkowymi
+    private JComponent getSetP() //panel z ustawieniami poczatkowymi
     {
         JPanel jp = new JPanel(new GridLayout(0,2));
         Font font = new Font("System", Font.BOLD, 16);
         String[] lDesc = {  "Odczyt w pionie [°]", 
                             "Odczyt w poziomie [°]",
-                            "Maks. odleg³oœæ [m.]",
-                            "Min. k¹t w pione [°]",
-                            "Maks. k¹t w pione [°]",
+                            "Maks. odleglosc [m.]",
+                            "Min. kat w pionie [°]",
+                            "Maks. kat w pionie [°]",
                         };
         
         int _cnt = 0; //licznik pomocniczy
@@ -124,22 +126,22 @@ public class TDaneWej implements IBlock {
         theHorSpi.setFont(font);
         jp.add(theHorSpi);
 
-        //Max odleg³oœæ
+        //Max odleglosc
         jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
         theMaxDistSpi.setFont(font);
         jp.add(theMaxDistSpi);
 
-        //Min k¹t w pionie
+        //Min kat w pionie
         jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
         thePionMinSpi.setFont(font);
         jp.add(thePionMinSpi);
 
-        //Max k¹t w pionie
+        //Max kat w pionie
         jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
         thePionMaxSpi.setFont(font);
         jp.add(thePionMaxSpi);
 
-        jp.setBorder(BorderFactory.createTitledBorder("Ustawienia pocz¹tkowe : "));
+        jp.setBorder(BorderFactory.createTitledBorder("Ustawienia poczatkowe : "));
         return jp;
     } //koniec getSetP
     
@@ -147,25 +149,25 @@ public class TDaneWej implements IBlock {
     {
         JPanel jp = new JPanel(new GridLayout(0,2));
         Font font = new Font("System", Font.BOLD, 16);
-        String[] lDesc = {"Poka¿ pozycjê robota",
-                            "Co który punkt", 
+        String[] lDesc = {"Pokaz pozycje robota",
+                            "Co ktory punkt", 
         };
         
         int _cnt = 0; //licznik pomocniczy
 
         //---
-        //Poka¿ pozycjê robota
+        //Pokaz pozycje robota
         jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
         jp.add(theRobPozChB);
 
         //===
         
-        //Co który punkt
+        //Co ktory punkt
         jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
         theGraphSpi.setFont(font);
         jp.add(theGraphSpi);
 
-        JButton objB = new JButton("Poka¿");
+        JButton objB = new JButton("Pokaz");
         objB.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e)
             {   TObjConfig.show(theObjFileN);   } //koniec aP
@@ -175,7 +177,7 @@ public class TDaneWej implements IBlock {
         return jp;
     } //koniec getObjP
         
-    private void checkSettings() //spr. i pobiera ustawienia pocz¹tkowe
+    private void checkSettings() //spr. i pobiera ustawienia poczatkowe
     {
         try {
             theVerStep = Double.parseDouble(theVerSpi.getValue().toString());
@@ -185,8 +187,8 @@ public class TDaneWej implements IBlock {
             theMaxPion = Double.parseDouble(thePionMaxSpi.getValue().toString());
             theGraphQnt = Integer.parseInt(theGraphSpi.getValue().toString());
         } catch (NumberFormatException err) { //chyba niepotrzebne (?)
-            showErr("B³êdne ustawienia pocz¹tkowe : " + err + 
-                    "\nZostan¹ przyjête ustawienia domyœlne !");
+            showErr("Bledne ustawienia poczatkowe : " + err + 
+                    "\nZostana przyjete ustawienia domyslne !");
             theVerStep = VER_STEP; theHorStep = HOR_STEP; theMaxDist =MAX_DIST;
             theMinPion = PION_MIN;  theMaxPion = PION_MAX;
             theGraphQnt = CO_ILE_OBJ;
@@ -200,46 +202,46 @@ public class TDaneWej implements IBlock {
             theObjFileN = aName.substring(0, _kropka);
         theObjFileN = theObjFileN.concat("_xyz");
         
-        //2. Tworzê plik .obj
+        //2. Tworze plik .obj
         TObjConfig.openFile(theObjFileN);
     } //koniec createObjFile
     
     private void readFile(boolean isLaser) //(true-laser, false-gazebo)
     {
-        //1. Sprawdzam, czy ustawienia s¹ prawid³owe. Je¿eli tak, to pobieram
+        //1. Sprawdzam, czy ustawienia sa prawidlowe. Jezeli tak, to pobieram
         checkSettings(); 
-        if (theMaxDistCnt > 0) theMaxDistCnt = 0; //zerujê licznik odrzuconych danych
+        if (theMaxDistCnt > 0) theMaxDistCnt = 0; //zeruje licznik odrzuconych danych
         
         //1. Odczyt pliku
         JFileChooser  lReadChF = new JFileChooser(System.getProperty("user.dir"));
         int res = lReadChF.showDialog(null, "Wybierz plik");
-        if (res == 1) return; //cz. wciœniêto CANCEL
+        if (res == 1) return; //cz. wcisnieto CANCEL
         File _file = lReadChF.getSelectedFile();
         if (_file != null)
             createObjFile(_file.getName()); //tworzy plik .obj
 
-        //Odczytuje plik i zapamiêtujê wszystkie linie
-        if (readFile1(_file, isLaser)) { //cz. uda³o siê odczytaæ plik  
-            TObjConfig.createFloor(); //rysow. pod³ogi
-            //Je¿eli zaznaczono, pokazuje pozycjê robota
+        //Odczytuje plik i zapamietuje wszystkie linie
+        if (readFile1(_file, isLaser)) { //cz. udalo sie odczytac plik  
+            TObjConfig.createFloor(); //rysow. podlogi
+            //Jezeli zaznaczono, pokazuje pozycje robota
             if (theRobPozChB.isSelected())
-                TObjConfig.line(0,0,0,0,0,2, "green"); //linia pionowa przechodz¹ca przez (0,0)
+                TObjConfig.line(0,0,0,0,0,2, "green"); //linia pionowa przechodzaca przez (0,0)
             TObjConfig.closeFile(); //Zamykam plik .obj
             JOptionPane.showMessageDialog(null, 
-                "K O N I E C !\nPoza zakresem: " + theMaxDistCnt + " punktów",
+                "K O N I E C !\nPoza zakresem: " + theMaxDistCnt + " punktow",
                                     "Koniec", JOptionPane.INFORMATION_MESSAGE);
         } else
             JOptionPane.showMessageDialog(null, 
-                    "B³¹d w odczycie pliku : " + _file,
-                    "B³¹d w odczycie pliku",
+                    "Blad w odczycie pliku : " + _file,
+                    "Blad w odczycie pliku",
                     JOptionPane.WARNING_MESSAGE);
     } //koniec readFile
     
     private boolean readFile1 (File aFile, boolean isLaser)
     {
-        boolean outFlag; //info, czy uda³o siê odczytaæ plik
+        boolean outFlag; //info, czy udalo sie odczytac plik
         try {
-            //1. Zapisujê wszystko do ArrayList
+            //1. Zapisuje wszystko do ArrayList
             BufferedReader br = new BufferedReader(new FileReader(aFile));
             String line = null;
             ArrayList<String> lLineAL = new ArrayList<String>();
@@ -251,13 +253,13 @@ public class TDaneWej implements IBlock {
                     lLineAL.add(line.trim());
                 } //koniec if
             } //koniec while
-            br.close(); //zamkniêcie strumienia;
+            br.close(); //zamkniecie strumienia;
             if (lLineAL.size() > 1) {
                 String[] linT = new String[lLineAL.size()];
                 linT = lLineAL.toArray(linT);
                 int _ileCnt = 0; //licznik pomocniczy (do .obj)
                 for (int i=0; i<linT.length; i++) {
-                    //1. Kasujê podwójne spacje
+                    //1. Kasuje podwojne spacje
                     while (linT[i].indexOf(SEPARATOR.concat(SEPARATOR)) != -1)
                         linT[i] = linT[i].replaceAll(SEPARATOR.concat(SEPARATOR), SEPARATOR);
                 
@@ -277,10 +279,10 @@ public class TDaneWej implements IBlock {
                         zT[_cnt++] = xyz.getZ();
                     } //koniec for xyz
                     
-                    //Dodajê punkt do pliku .obj
+                    //Dodaje punkt do pliku .obj
                     //int _ileCnt = 0; //licznik pomocniczy
                     for (int j=0; j<xT.length; j++) {
-                        if (_ileCnt++ % theGraphQnt == 0) { //biorê co któryœ pkt
+                        if (_ileCnt++ % theGraphQnt == 0) { //biore co ktorys pkt
                             TObjConfig.setMinMax(xT[j], yT[j], zT[j]);
                             TObjConfig.cube(xT[j], yT[j], zT[j]);
                         } //koniec if
@@ -289,10 +291,11 @@ public class TDaneWej implements IBlock {
                 
                 /************ dane do bloku Basi **************/
                 ///BASIA.setInputData(xT, yT, zT);
+                /// theNext...
                     
                 outFlag = true;
             } else {
-                showErr("Za ma³o danych");
+                showErr("Za malo danych");
                 outFlag = false;
             } //koniec if-else
         } catch (FileNotFoundException err) {
@@ -307,15 +310,15 @@ public class TDaneWej implements IBlock {
         return outFlag;
     } //koniec readFile1
     /************************************/
-    /*  Sekcja z obrók¹ danych z lasera */
+    /*  Sekcja z obroka danych z lasera */
     /************************************/
     private ArrayList<TXyz> getElkaALFromLine(String aLine)
     {
         ArrayList<TXyz> lXyzAL = new ArrayList<TXyz>();
         
         String[] lStrT = aLine.split(SEPARATOR);
-        if (lStrT.length < 4) { //cz. za ma³o danych w wszu
-            showErr("b³¹d w wierszu: " + aLine);
+        if (lStrT.length < 4) { //cz. za malo danych w wszu
+            showErr("blad w wierszu: " + aLine);
             return lXyzAL;
         } //koniec if
 
@@ -324,7 +327,7 @@ public class TDaneWej implements IBlock {
         try { 
             if (lStrT[3].trim().equals(LASER)) {
                 if (lStrT.length != 372) {
-                    showErr("Z³a iloœæ danych w wierszu: " + ", jest: " + lStrT.length);
+                    showErr("Zla ilosc danych w wierszu: " + ", jest: " + lStrT.length);
                     return lXyzAL;
                 } //koniec if
                 lAlfaAng = Double.parseDouble(lStrT[6]); //radiany
@@ -333,7 +336,7 @@ public class TDaneWej implements IBlock {
                 for (int i=0; i<lLasT.length; i++) {
                     lLasT[i] = Double.parseDouble(lStrT[_cnt]);
                     _cnt += 2;
-                    //Obs³ugujê tylko gdy jest dobry k¹t w poziomie
+                    //Obsluguje tylko gdy jest dobry kat w poziomie
                     if (theMinPion <= thePionAng &&  thePionAng <= theMaxPion
                             && lLasT[i]<= theMaxDist) { //Spr. czy nie jest poza zakresem
                         lXyzAL.add(new TXyz(getXYZ(lLasT[i], 
@@ -343,25 +346,25 @@ public class TDaneWej implements IBlock {
                         theMaxDistCnt++;  //cz.ile odrzucono
                     } //koniec if-else
                 } //koniec for
-            } else if (lStrT[3].trim().equals(PTZ)) { //czyli zmiana k¹ta w pionie
+            } else if (lStrT[3].trim().equals(PTZ)) { //czyli zmiana kata w pionie
                 thePionAng = Double.parseDouble(lStrT[7]);
             } //koniec if - else
         } catch (NumberFormatException err) {
-            showErr ("B³¹d w konwersji typów w linii: " + aLine);
+            showErr ("Blad w konwersji typow w linii: " + aLine);
             return lXyzAL;
         } catch (ArrayIndexOutOfBoundsException err) {
-            showErr ("B³¹d w iloœci zmiennch w linii: " + aLine);
+            showErr ("Blad w ilosci zmiennch w linii: " + aLine);
             return lXyzAL;
         } //koniec try-catch
        
         return lXyzAL;
     } //koniec getElkaALFromLine
-    //=== koniec sekcji z obróbk¹ danych z lasera
+    //=== koniec sekcji z obrobka danych z lasera
     
     /************************************/
-    /*  Sekcja z obrók¹ danych z Gazebo */
+    /*  Sekcja z obroka danych z Gazebo */
     /************************************/
-    private ArrayList<TXyz> getGazALFromLine(String[] aLinT, double aVerStep) //czytam 1liniê danych z Gazebo
+    private ArrayList<TXyz> getGazALFromLine(String[] aLinT, double aVerStep) //czytam 1linie danych z Gazebo
     {
         ArrayList<TXyz> lXyzAL = new ArrayList<TXyz>();
         
@@ -370,17 +373,16 @@ public class TDaneWej implements IBlock {
         for (int i=0; i<lVarT.length; i++) {
             try { lVarT[i] = Double.parseDouble(aLinT[i].replace(',', '.').trim());   }
             catch (NumberFormatException err) {
-                showErr("B³¹d w konwersji typu");
+                showErr("Blad w konwersji typu");
                 return lXyzAL;
             } //koniec try-catch
         } //koniec for
         
-        for (int i=0; i<lVarT.length; i++) { //ca³y plik
+        for (int i=0; i<lVarT.length; i++) { //caly plik
             if (lVarT[i]<= theMaxDist) { //Spr. czy nie jest poza zakresem
-                // Dodajê pkt do listy z pktami
+                // Dodaje pkt do listy z pktami
                 lXyzAL.add(new TXyz(getXYZ(lVarT[i], theHorStep*i, aVerStep, 
                                                                     false)));
-
             } else { //cz. za daleko
                 theMaxDistCnt++; //zliczam ile poza zakresem
                 //System.out.println ("odrzucam: lVarT[" + i + "]: " + lVarT[i]);
@@ -388,7 +390,7 @@ public class TDaneWej implements IBlock {
         } //koniec for i
         return lXyzAL;
     } //koniec getGazALFromLine
-    //=== koniec sekcji z obróbk¹ danych z Gazebo
+    //=== koniec sekcji z obrobka danych z Gazebo
     
     private static double[] getXYZ(double aR, double aPoziom, double aPion, 
                                                             boolean isLaserF)
@@ -412,15 +414,13 @@ public class TDaneWej implements IBlock {
 
     //Metody pomocnicze
     public static void showErr(String aStr)
-    {
-        JOptionPane.showMessageDialog(null, 
-                aStr, "B³¹d !", JOptionPane.WARNING_MESSAGE);
+    {   JOptionPane.showMessageDialog(null, 
+                aStr, "Blad !", JOptionPane.WARNING_MESSAGE);
         System.exit(0);
     } //koniec showErr
 
     private static double round(double aVal)
-    {
-        BigDecimal bD = new BigDecimal(aVal); 
+    {   BigDecimal bD = new BigDecimal(aVal); 
         return bD.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue(); 
     } //koniec round
 } //koniec klasy TDaneWej

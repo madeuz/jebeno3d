@@ -12,8 +12,8 @@ import javax.swing.*;
  * @author  Michal Gnatowski
  */
 
-//klasa tylko wstawia ikonê w pasku tytulowym
-public class TBarIcon extends JFrame { //klasa tylko ustawia ikonê w pasku
+//klasa tylko wstawia ikone w pasku tytulowym
+public class TBarIcon extends JFrame { //klasa tylko ustawia ikone w pasku
 
     public final static  String IMG = "img/"; //ikony
     private static final String NAZWA_PLIKU = IMG + "psa.gif";

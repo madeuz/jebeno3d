@@ -20,10 +20,16 @@ public class TController {
     private ArrayList <IBlock> fBlockAL = new ArrayList<IBlock>(); //lista bloków
     public TController() 
     {
-        //1. Tworzê blok 1
-        fBlockAL.add(new TDaneWej());
+        //Dodanie blokow od konca (ze wzgledu na metode setNext();
         
+        //1. Tworzê blok 2
+        Test t = new Test();
 fBlockAL.add(new Test());
+
+        //1. Tworzê blok 1
+        TDaneWej tdw = new TDaneWej();
+        tdw.setNext(t);
+        fBlockAL.add(tdw);
         
         //2. Tworzyæ kolejne bloki
         //fBlockAL.add(...)
@@ -38,6 +44,7 @@ fBlockAL.add(new Test());
 //test - do skasowania
 class Test implements IBlock {
     
+    public IBlock theNext;
     public String getTabTitle() { return "TEST"; }
     public JComponent getJComponent()   
     {   
@@ -46,4 +53,8 @@ class Test implements IBlock {
         jp.add(new JLabel ("TEST", JLabel.CENTER));
         return jp;
     } //koniec getJComponent
+    
+    public void setNext(IBlock aN) {
+        theNext = aN;
+    }
 } //koniec test
