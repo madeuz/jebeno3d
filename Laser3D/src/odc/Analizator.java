@@ -17,10 +17,10 @@ import javax.swing.JPanel;
 import ste.IBlock;
 
 
-// Aby otzryma�plik z segmentami nalezy wywolac
+// Aby otrzymac plik z segmentami nalezy wywolac
 // (new Analizator(xx,yy,zz,i)).segmenty(MenuPanel.pw());
 // xx,yy,zz -tablice odczytow
-// i numer ci�ia 
+// i numer ciecia 
 // MenuPanel.pw - PrintWriter do kt�ego zapisywane s dane(do zmiany)
 // ostatnie dwa parametry okreslaja poczatek i koniec sektora w 
 // radianach
@@ -104,20 +104,17 @@ public class Analizator implements IBlock {
     {
         int k1=0;
         int k2=-1;
-       
+
         Odcinek.tlista();
         lseg(0, len);
         Odcinek.druklist(pw);
         return Odcinek.lista;
-    
-  }
+    }
     
    // Oblicza odlego�punktu c,y od prostej
     
-   double dist(double c, double s,double d, double x, double y ){
-       return Math.abs(c*x+s*y-d);
-       
-       
+   double dist(double c, double s,double d, double x, double y ) {
+        return Math.abs(c*x+s*y-d);
    }
 
    public String getTabTitle() {

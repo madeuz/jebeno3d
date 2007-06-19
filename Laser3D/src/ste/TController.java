@@ -21,10 +21,23 @@ public class TController {
    private ArrayList <IBlock> fBlockAL = new ArrayList<IBlock>(); //lista blokï¿½w
    public TController() {
       //Dodanie blokow od konca (ze wzgledu na metode setNext();
-      
+
+       fBlockAL.add(new TDaneWej());
+       fBlockAL.add(new Analizator());
+       fBlockAL.add(new Test());
+       //fBlockAL.add(new Arek());
+       //.... (nastêpne modu³y)
+       
+       //Wszystkie elementy z wyj¹tkiem ostatniego przekazuj¹ siê do nastêpnego
+       for (int i=0; i<fBlockAL.size()-1; i++) {
+           IBlock prev = (IBlock)fBlockAL.get(i);
+           IBlock next = (IBlock)fBlockAL.get(i+1);
+           prev.setNext(next);
+       } //koniec for
+           
+       /*
       //1. Tworzï¿½ blok 2
       Analizator ana = new Analizator();
-      
       
       //1. Tworzï¿½ blok 1
       TDaneWej tdw = new TDaneWej();
@@ -34,7 +47,7 @@ public class TController {
       fBlockAL.add(ana);
       //2. Tworzyï¿½ kolejne bloki
       //fBlockAL.add(...)
-      
+      */
       new TGlowneOkno(this);
    } //koniec kontruktora TController
    
