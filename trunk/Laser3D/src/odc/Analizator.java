@@ -10,6 +10,7 @@
 package odc;
 
 //package genplaszczyzn;
+import java.awt.Button;
 import java.util.*;
 import java.io.*;
 import javax.swing.JComponent;
@@ -122,7 +123,10 @@ public class Analizator implements IBlock {
    }
 
    public JComponent getJComponent() {
-      return new JPanel();
+     JPanel jp =  new JPanel();
+     Button b = new Button("Analizator TEST");
+     jp.add(b);
+     return jp;
    }
 
    public void setNext(IBlock aNext) {
