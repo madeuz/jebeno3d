@@ -20,6 +20,8 @@ public class Main {
     //2007.06.06    6h     17h  MG
     //2007.06.09    3h     20h  MG
     //2007.06.12    4h     24h  MG
+    //2007.06.14    5h     29h  MG
+    //2007.06.15    5h     34h  MG
     
     public static void main(String[] args) 
     {   /*

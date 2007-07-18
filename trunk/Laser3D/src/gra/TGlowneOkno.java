@@ -18,7 +18,7 @@ import javax.swing.*;
  */
 public class TGlowneOkno extends TBarIcon {
     
-    private final static String TITLE = "Laser 3D (19.cze.2007)";
+    private final static String TITLE = "Laser 3D (15.lip.2007)";
     private TController fControl;
     private String[] theMenuStrTab = {"Plik", "Pomoc"};
     private JMenu[] jmTab = new JMenu [theMenuStrTab.length]; 
@@ -37,9 +37,10 @@ public class TGlowneOkno extends TBarIcon {
         pack();
 
         // polozenie okna
-        setSize((int)(screenSize.width *7f/8f),(int)(screenSize.height *7f/8f));
-        setLocation((int)(screenSize.width/2f -  getSize().width/2f), 
-                    (int)(screenSize.height/2f - getSize().height/2f));
+        setSize((int)(screenSize.width *3f/4f),(int)(screenSize.height *2f/3f));
+        setLocation((int)(screenSize.width/2f - getSize().width/2f), 
+                    20);
+                    //(int)(screenSize.height/2f - getSize().height/2f));
         setVisible(true);
     } //koniec konstruktora
 
@@ -76,8 +77,8 @@ public class TGlowneOkno extends TBarIcon {
         
         JTabbedPane jtb = new JTabbedPane();
         //2. Dodajê wszystkie bloki
-        for (IBlock ib : fControl.getBlockAL())
-            jtb.addTab(ib.getTabTitle(), ib.getJComponent());
+        for (TAbstBlock tab : fControl.getBlockAL())
+            jtb.addTab(tab.getTabTitle(), tab.getJComponent());
         jp.add(jtb, BorderLayout.CENTER);
         return jp;
     } //koniec makeWindow()

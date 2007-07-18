@@ -21,17 +21,19 @@ public class TObjConfig {
     private final static double INF = 999999; //nieskolczonoll
     private final static float SZER_2 = 0.01f; //pl szerokolci Szescianu
     private final static String FILE_EXTENTION = ".obj";
-    private static PrintWriter thePrintW;
-    private static double theMinX=INF, theMaxX=-1*INF,
+    private double theMinX=INF, theMaxX=-1*INF,
             theMinY=INF, theMaxY=-1*INF, theMinH=INF, theMaxH=-1*INF;
+    private PrintWriter thePrintW;
+    private boolean isFileOpened = false; //flaga, czy plik jest otwarty
     
     //Otworzenie strumienia do zapisu.
-    public static void openFile(String aFileN) {
+    public void openFile(String aFileN) {
         //Kasujl min-max podlogi
         theMinX=INF; theMaxX=-1*INF; theMinY=INF; theMaxY=-1*INF;
         theMinH=INF; theMaxH=-1*INF;
         
         File lFile = new File(checkExtention(aFileN));
+        isFileOpened = true; //flaga, ¿e plik jest otwarty
         if (lFile.exists()) lFile.delete();
         try {
             thePrintW = new PrintWriter(new BufferedWriter(
@@ -41,10 +43,14 @@ public class TObjConfig {
         } //koniec try-catch
     } //koniec openFile
     
-    public static void closeFile() {
-        thePrintW.close();  }
+    public void closeFile() 
+    {   isFileOpened = false; //flaga, ¿e plik jest zamkniêty
+        thePrintW.close();  
+    } //koniec closeFile
     
-    public static void show(String aFileN) {
+    public boolean isFileOpened()   {   return isFileOpened;   }
+    
+    public void show(String aFileN) {
         try {
             if(System.getProperty("os.name").trim().startsWith("Linux") ){
                 
@@ -62,7 +68,7 @@ public class TObjConfig {
         } //koniec try-catch
     } //koniec show
     
-    public static void plane(double[][] aPtT, boolean aLeftF, boolean aRightF) {
+    public void plane(double[][] aPtT, boolean aLeftF, boolean aRightF) {
         if (!isDataOk(aPtT, "plaszczylnie"))    return;
         StringBuffer outSB = new StringBuffer("# Plaszczyzna\ng Plaszczyzna\nusemtl ").
                 append("gray").append("\n");
@@ -99,12 +105,11 @@ public class TObjConfig {
      *  1,--------4,
      */
     //Zwraca opis Szescianu
-    public static void cube(double aX, double aY, double aH) {
+    public void cube(double aX, double aY, double aH) {
         cube(aX, aY, aH, SZER_2);  } //domyllny rozmiar Szescianu
     
-    public static void cube(double aX, double aY, double aH, double aSzer_2) {
+    public void cube(double aX, double aY, double aH, double aSzer_2) {
         if (!isDataOk(aX, aY, aH, aSzer_2, 0, 0, "Szescianie"))    return;
-        
         //Obliczam pkty Szescianu
         double minX, maxX, minY, maxY, minH, maxH;
         minX = aX-aSzer_2; maxX = aX+aSzer_2;
@@ -193,15 +198,20 @@ public class TObjConfig {
      *  |  5-------| 8
      *  1,--------4,
      */
-    public static void polygon(double[][] aPtT) { polygon(aPtT, "gray"); }
-    public static void polygon(double[][] aPtT, String aColStr) {
+    //public void polygon(double[][] aPtT) { polygon(aPtT, "gray"); }
+    public void polygon(double[][] aPtT) { polygon(aPtT, "gray", "plscian"); }
+    public void polygon(double[][] aPtT, String aColStr, String aName) {
+        
+        //aName musi byæ, poniewa¿ takie same aName maj¹ ten sam kolor
         if (!isDataOk(aPtT, "wielokacie"))    return;
         
         if (aPtT.length != 8) return ; //za malo punktlw
         if (aPtT[0].length != 3) return ; //za malo punktlw
-        StringBuffer outSB = new StringBuffer("# Plcian ");
+        //StringBuffer outSB = new StringBuffer("# Plcian ");
+        StringBuffer outSB = new StringBuffer("# " + aName + " ");
         //outSB.append("\ng plcian\nusemtl ").append("gray").append("\n");
-        outSB.append("\ng plcian\nusemtl ").append(aColStr).append("\n");
+        //outSB.append("\ng plcian\nusemtl ").append(aColStr).append("\n");
+        outSB.append("\ng " + aName + "\nusemtl ").append(aColStr).append("\n");
         for (byte i=0; i<aPtT.length; i++)
             outSB.append("v ").
                     append(aPtT[i][0]).append(" ").
@@ -242,15 +252,13 @@ public class TObjConfig {
         thePrintW.println(outSB);
     } //koniec polygon
     
-    public static void line(double aX1, double aY1, double aZ1,
-            double aX2, double aY2, double aZ2) {
-        line(aX1, aY1, aZ1, aX2, aY2, aZ2, "gray");
-    } //koniec line
-    public static void line(double aX1, double aY1, double aZ1,
-            double aX2, double aY2, double aZ2, String aColStr) {
+    public void line(double aX1, double aY1, double aZ1,
+            double aX2, double aY2, double aZ2, String aColStr, String aName) {
+        //System.out.println("line (" + aX1 + ", " + aY1 + ", " + aZ1 + "), (" + 
+        //                                aX2 + ", " + aY2 + ", " + aZ2 + ");");
         if (!isDataOk(aX1, aY1, aZ1, aX2, aY2, aZ2, "linii"))    return;
-        //Przedstawiam linil jako plcian
-        int _factor = 2;
+        //Przedstawiam linie jako plcian
+        int _factor = 1;
         double[][] pT = {
             {aX1-_factor*SZER_2, aY1, aZ1+_factor*SZER_2},
             {aX1+_factor*SZER_2, aY1, aZ1+_factor*SZER_2},
@@ -262,11 +270,11 @@ public class TObjConfig {
             {aX2-_factor*SZER_2, aY1, aZ2-_factor*SZER_2},
             {aX2+_factor*SZER_2, aY1, aZ2-_factor*SZER_2},
         };
-        polygon(pT, aColStr);
+        polygon(pT, aColStr, aName);
     } //koniec line
     
     //Zapamiltujl min i max
-    public static void setMinMax(double aX, double aY, double aH) {
+    public void setMinMax(double aX, double aY, double aH) {
         if (aX < theMinX)   theMinX = aX;
         if (aX > theMaxX)   theMaxX = aX;
         if (aY < theMinY)   theMinY = aY;
@@ -276,12 +284,13 @@ public class TObjConfig {
     } //koniec setMinMax
     
     //Rysowanie podlogi
-    public static void createFloor() {
+    public void createFloor() {
         createFloor(theMinX, theMinY, theMaxX, theMaxY, 0);
     } //koniec createFloor
     
-    public static void createFloor(double xMin, double yMin,
+    public void createFloor(double xMin, double yMin,
             double xMax, double yMax, double aWys) {
+        System.out.println("createFloor");
         if (!isDataOk(xMin, yMin, xMax, yMax, 0, 0, "podlodze"))    return;
         double _min = aWys;
         StringBuffer lOutSB = new StringBuffer();
@@ -312,13 +321,13 @@ public class TObjConfig {
     } //koniec createFloor
     
     //Sprawdzenie i ewentualnie dopisanie rozszerzenia
-    public static String checkExtention(String aStr) {
+    public String checkExtention(String aStr) {
         if (!aStr.endsWith(FILE_EXTENTION))
             aStr = aStr.concat(FILE_EXTENTION);
         return aStr;
     } //koniec checkExtention
     
-    private static boolean isDataOk(double[][] aT, String aGdzie) {
+    private boolean isDataOk(double[][] aT, String aGdzie) {
         for (int i=0; i<aT.length; i++) {
             for (int j=0; j<aT[i].length; j++) {
                 if (Double.isNaN(aT[i][j])) {
@@ -337,7 +346,7 @@ public class TObjConfig {
         return true;
     } //koniec isDataOk
     
-    private static boolean isDataOk(double aP1, double aP2, double aP3,
+    private boolean isDataOk(double aP1, double aP2, double aP3,
             double aP4, double aP5, double aP6,
             String aGdzie) {
         if (Double.isNaN(aP1) || Double.isNaN(aP2) || Double.isNaN(aP3) ||
