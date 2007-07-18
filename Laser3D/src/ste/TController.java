@@ -18,47 +18,34 @@ import javax.swing.*; //do klasy TEST
  */
 public class TController {
    
-   private ArrayList <IBlock> fBlockAL = new ArrayList<IBlock>(); //lista blokï¿½w
-   public TController() {
-      //Dodanie blokow od konca (ze wzgledu na metode setNext();
+    private ArrayList <TAbstBlock> fBlockAL = new ArrayList<TAbstBlock>(); //lista blokï¿½w
+    public TController() {
+        //Dodanie blokow od konca (ze wzgledu na metode setNext();
 
-       fBlockAL.add(new TDaneWej());
-       fBlockAL.add(new Analizator());
-       fBlockAL.add(new Test());
-       //fBlockAL.add(new Arek());
-       //.... (nastêpne modu³y)
+        fBlockAL.add(new TDaneWej());
+        fBlockAL.add(new Analizator());
+        fBlockAL.add(new Test());
+        //fBlockAL.add(new Arek());
+        //.... (nastêpne modu³y)
        
-       //Wszystkie elementy z wyj¹tkiem ostatniego przekazuj¹ siê do nastêpnego
-       for (int i=0; i<fBlockAL.size()-1; i++) {
-           IBlock prev = (IBlock)fBlockAL.get(i);
-           IBlock next = (IBlock)fBlockAL.get(i+1);
-           prev.setNext(next);
-       } //koniec for
-           
-       /*
-      //1. Tworzï¿½ blok 2
-      Analizator ana = new Analizator();
-      
-      //1. Tworzï¿½ blok 1
-      TDaneWej tdw = new TDaneWej();
-      tdw.setNext(ana);
-      
-      fBlockAL.add(tdw);
-      fBlockAL.add(ana);
-      //2. Tworzyï¿½ kolejne bloki
-      //fBlockAL.add(...)
-      */
-      new TGlowneOkno(this);
-   } //koniec kontruktora TController
+        //Wszystkie elementy z wyj¹tkiem ostatniego przekazuj¹ siê do nastêpnego
+        for (int i=0; i<fBlockAL.size()-1; i++) {
+            TAbstBlock prev = (TAbstBlock)fBlockAL.get(i);
+            TAbstBlock next = (TAbstBlock)fBlockAL.get(i+1);
+            prev.setNext(next);
+        } //koniec for
+       
+        new TGlowneOkno(this);
+    } //koniec kontruktora TController
    
-   public ArrayList<IBlock> getBlockAL()   {   return fBlockAL;   }
+   public ArrayList<TAbstBlock> getBlockAL()   {   return fBlockAL;   }
    
 } //koniec klasy TController
 
 //test - do skasowania
-class Test implements IBlock {
+class Test extends TAbstBlock {
    
-   public IBlock theNext;
+   public TAbstBlock theNext;
    public String getTabTitle() { return "TEST"; }
    public JComponent getJComponent() {
       JPanel jp = new JPanel();
@@ -67,7 +54,9 @@ class Test implements IBlock {
       return jp;
    } //koniec getJComponent
    
-   public void setNext(IBlock aN) {
+   public void setNext(TAbstBlock aN) {
       theNext = aN;
    }
+    public void createObjFile(String aN) { }
+    public void checkSettings(){};
 } //koniec test

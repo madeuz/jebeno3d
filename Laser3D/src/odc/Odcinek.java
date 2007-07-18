@@ -67,7 +67,7 @@ public class Odcinek implements Comparable<Odcinek>{
     
     public Odcinek(double xx[], double yy[], double zz[], int k1, int k2,int len) {
         this.len=len;
-        if((k1<0)||(k2<0)) return;
+        if((k1<0)||(k2<1)) return;
         
         x1=xx[k1];
         y1=yy[k1];
