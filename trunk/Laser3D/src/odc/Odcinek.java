@@ -141,13 +141,13 @@ public class Odcinek implements Comparable<Odcinek>{
          
      }
      
-     static void druklist(PrintWriter pw){
+     static void druklist(){
         System.out.println("druklist"); 
         if(lista==null) System.out.println("lista  null");
         else System.out.println(lista.size());
         msort();
         for(int i=0;i<lista.size();i++){
-             lista.get(i).druk(pw);
+             lista.get(i);
              lista2.add(lista.get(i));
          }
          

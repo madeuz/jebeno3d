@@ -31,6 +31,270 @@ import java.math.BigDecimal;
  *
  * @author Michal
  */
+
+public class TDaneWej implements IBlock {
+   
+   private static final double VER_STEP = 1; //co ile w pionie
+   private static final double HOR_STEP = 1; //co ile w poziom
+   private final static double MAX_DIST = 8d; //metry
+   
+   private final static int PION_MIN = 0; //min. kat w poziomie
+   private final static int PION_MAX = 90;  //max kat w poziomie
+   
+   private final static String LASER = "laser";
+   private final static String PTZ = "ptz";
+   private final static int ILE_LASER = 181; //ile pktow z lasera w 1. linii
+   
+   private final static String KOMENTARZ = "//"; //komentarz w oryginale
+   private static final String SEPARATOR = " ";
+   
+   private final static int CO_ILE_OBJ = 100; //co ktory pkt ma wyswietlac
+   
+   private double theVerStep, theHorStep, theMaxDist; //ustawienia poczatkowe.
+   private double theMinPion, theMaxPion; //ustawienia poczatk. (tylko laser)
+   private JSpinner theVerSpi = new JSpinner(new SpinnerNumberModel(
+      VER_STEP,0,100,0.1));
+   private JSpinner theHorSpi = new JSpinner(new SpinnerNumberModel(
+      HOR_STEP,0,100,0.1));
+   private JSpinner theMaxDistSpi= new JSpinner(new SpinnerNumberModel(
+      MAX_DIST,0,100,0.1));
+   private JSpinner thePionMinSpi= new JSpinner(new SpinnerNumberModel(
+      PION_MIN,-100,100,0.1));
+   private JSpinner thePionMaxSpi= new JSpinner(new SpinnerNumberModel(
+      PION_MAX,0,100,0.1));
+   private int theGraphQnt; //co ile pktow brac do grafiki.
+   private JSpinner theGraphSpi = new JSpinner(new SpinnerNumberModel(
+      CO_ILE_OBJ,1,10000,10));
+   private static int theMaxDistCnt = 0; //licznik ile poza zakresem
+   private static double thePionAng = 0; //kat obrotu lasera w pionie [stopnie]
+   private String theObjFileN; //nazwa pliku .obj
+   private JCheckBox theRobPozChB = new JCheckBox("", true); //pokaz pozycje robota
+   private IBlock theNext;
+   
+   public TDaneWej() { } //koniec konstruktora
+   
+   public void setNext(IBlock aN)  {   theNext = aN;   } //koniec setNext
+   public String getTabTitle()  {   return "Dane wejsciowe";}//Laser/Gazebo ï¿½ï¿½> xyz"; }
+   public JComponent getJComponent() {
+      JPanel jp = new JPanel();
+      jp.setBackground(Color.orange);
+      
+      //1. Dodanie przyciskow (laser i Gazebo)
+      JPanel jpB = new JPanel(new GridLayout(2,1,10,10)); //do przyciskow
+      JButton lasB = new JButton("Wczytaj plik z lasera");
+      lasB.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) { readFile(true); }
+      });
+      jpB.add(lasB);
+      
+      JButton gazB = new JButton("Wczytaj plik z Gazebo");
+      gazB.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) { readFile(false); }
+      });
+      jpB.add(gazB);
+      jp.add(jpB);
+      
+      //2. Dodanie ustawieï¿½ poczatkowych
+      jp.add(getSetP());
+      
+      //3. Dodanie danych do wizualizacji
+      jp.add(getObjP());
+      
+      return jp;
+   } //koniec getJComponent
+   
+   private JComponent getSetP() //panel z ustawieniami poczatkowymi
+   {
+      JPanel jp = new JPanel(new GridLayout(0,2));
+      Font font = new Font("System", Font.BOLD, 16);
+      String[] lDesc = {  "Odczyt w pionie [ï¿½]",
+      "Odczyt w poziomie [ï¿½]",
+      "Maks. odleglosc [m.]",
+      "Min. kat w pionie [ï¿½]",
+      "Maks. kat w pionie [ï¿½]",
+      };
+      
+      int _cnt = 0; //licznik pomocniczy
+      
+      //Odczyt w pionie
+      jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
+      theVerSpi.setFont(font);
+      jp.add(theVerSpi);
+      
+      //Odczyt w poziomie
+      jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
+      theHorSpi.setFont(font);
+      jp.add(theHorSpi);
+      
+      //Max odleglosc
+      jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
+      theMaxDistSpi.setFont(font);
+      jp.add(theMaxDistSpi);
+      
+      //Min kat w pionie
+      jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
+      thePionMinSpi.setFont(font);
+      jp.add(thePionMinSpi);
+      
+      //Max kat w pionie
+      jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
+      thePionMaxSpi.setFont(font);
+      jp.add(thePionMaxSpi);
+      
+      jp.setBorder(BorderFactory.createTitledBorder("Ustawienia poczatkowe : "));
+      return jp;
+   } //koniec getSetP
+   
+   private JComponent getObjP() //panel z ustawieniami do wizualizacji
+   {
+      JPanel jp = new JPanel(new GridLayout(0,2));
+      Font font = new Font("System", Font.BOLD, 16);
+      String[] lDesc = {"Pokaz pozycje robota",
+      "Co ktory punkt",
+      };
+      
+      int _cnt = 0; //licznik pomocniczy
+      
+      //---
+      //Pokaz pozycje robota
+      jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
+      jp.add(theRobPozChB);
+      
+      //===
+      
+      //Co ktory punkt
+      jp.add(new JLabel(lDesc[_cnt++].concat(" : "), JLabel.RIGHT));
+      theGraphSpi.setFont(font);
+      jp.add(theGraphSpi);
+      
+      JButton objB = new JButton("Pokaz");
+      objB.addActionListener(new ActionListener(){
+         public void actionPerformed(ActionEvent e) {
+            TObjConfig.show(theObjFileN);   } //koniec aP
+      });
+      jp.add(objB);
+      jp.setBorder(BorderFactory.createTitledBorder("Grafika : "));
+      return jp;
+   } //koniec getObjP
+   
+   private void checkSettings() //spr. i pobiera ustawienia poczatkowe
+   {
+      try {
+         theVerStep = Double.parseDouble(theVerSpi.getValue().toString());
+         theHorStep = Double.parseDouble(theHorSpi.getValue().toString());
+         theMaxDist = Double.parseDouble(theMaxDistSpi.getValue().toString());
+         theMinPion = Double.parseDouble(thePionMinSpi.getValue().toString());
+         theMaxPion = Double.parseDouble(thePionMaxSpi.getValue().toString());
+         theGraphQnt = Integer.parseInt(theGraphSpi.getValue().toString());
+      } catch (NumberFormatException err) { //chyba niepotrzebne (?)
+         showErr("Bledne ustawienia poczatkowe : " + err +
+            "\nZostana przyjete ustawienia domyslne !");
+         theVerStep = VER_STEP; theHorStep = HOR_STEP; theMaxDist =MAX_DIST;
+         theMinPion = PION_MIN;  theMaxPion = PION_MAX;
+         theGraphQnt = CO_ILE_OBJ;
+      } //koniec try-catch
+   } //koniec checkSettings
+   
+   private void createObjFile(String aName) {
+      int _kropka = aName.lastIndexOf(".");
+      if (_kropka != -1) //cz. istnieje kropka w nazwiePliku
+         theObjFileN = aName.substring(0, _kropka);
+      theObjFileN = theObjFileN.concat("_xyz");
+      
+      //2. Tworze plik .obj
+      TObjConfig.openFile(theObjFileN);
+   } //koniec createObjFile
+   
+   private void readFile(boolean isLaser) //(true-laser, false-gazebo)
+   {
+      //1. Sprawdzam, czy ustawienia sa prawidlowe. Jezeli tak, to pobieram
+      checkSettings();
+      if (theMaxDistCnt > 0) theMaxDistCnt = 0; //zeruje licznik odrzuconych danych
+      
+      //1. Odczyt pliku
+      JFileChooser  lReadChF = new JFileChooser(System.getProperty("user.dir"));
+      int res = lReadChF.showDialog(null, "Wybierz plik");
+      if (res == 1) return; //cz. wcisnieto CANCEL
+      File _file = lReadChF.getSelectedFile();
+      if (_file != null)
+         createObjFile(_file.getName()); //tworzy plik .obj
+      
+      //Odczytuje plik i zapamietuje wszystkie linie
+      if (readFile1(_file, isLaser)) { //cz. udalo sie odczytac plik
+         TObjConfig.createFloor(); //rysow. podlogi
+         //Jezeli zaznaczono, pokazuje pozycje robota
+         if (theRobPozChB.isSelected())
+            TObjConfig.line(0,0,0,0,0,2, "green"); //linia pionowa przechodzaca przez (0,0)
+         TObjConfig.closeFile(); //Zamykam plik .obj
+         JOptionPane.showMessageDialog(null,
+            "K O N I E C !\nPoza zakresem: " + theMaxDistCnt + " punktow",
+            "Koniec", JOptionPane.INFORMATION_MESSAGE);
+      } else
+         JOptionPane.showMessageDialog(null,
+            "Blad w odczycie pliku : " + _file,
+            "Blad w odczycie pliku",
+            JOptionPane.WARNING_MESSAGE);
+   } //koniec readFile
+   
+   private boolean readFile1(File aFile, boolean isLaser) {
+      boolean outFlag; //info, czy udalo sie odczytac plik
+      try {
+         //1. Zapisuje wszystko do ArrayList
+         BufferedReader br = new BufferedReader(new FileReader(aFile));
+         String line = null;
+         ArrayList<String> lLineAL = new ArrayList<String>();
+         while((line = br.readLine()) != null) {
+            if (!line.startsWith(KOMENTARZ) && line.length()>0) { //komentarz
+               //Spr. czy jest komentarz w linii
+               if (line.indexOf(KOMENTARZ) > 0) //czyli jest komentarz
+                  line = line.substring(0, line.indexOf(KOMENTARZ));
+               lLineAL.add(line.trim());
+            } //koniec if
+         } //koniec while
+         br.close(); //zamkniecie strumienia;
+         if (lLineAL.size() > 1) {
+            String[] linT = new String[lLineAL.size()];
+            linT = lLineAL.toArray(linT);
+            int _ileCnt = 0; //licznik pomocniczy (do .obj)
+            for (int i=0; i<linT.length; i++) {
+               //1. Kasuje podwojne spacje
+               while (linT[i].indexOf(SEPARATOR.concat(SEPARATOR)) != -1)
+                  linT[i] = linT[i].replaceAll(SEPARATOR.concat(SEPARATOR), SEPARATOR);
+               
+               ArrayList<TXyz> lXyzAL = null;
+               if (isLaser) lXyzAL = getElkaALFromLine(linT[i]);
+               else lXyzAL = getGazALFromLine(
+                  linT[i].split(SEPARATOR), i*theVerStep);
+               
+               //Zamieniam dane z fXyzAL na 3x[]
+               double[] xT = new double[lXyzAL.size()];
+               double[] yT = new double[xT.length];
+               double[] zT = new double[xT.length];
+               int _cnt = 0; //licznik pomocniczy
+               for (TXyz xyz : lXyzAL) {
+                  xT[_cnt] = xyz.getX();
+                  yT[_cnt] = xyz.getY();
+                  zT[_cnt++] = xyz.getZ();
+               } //koniec for xyz
+               
+               //Dodaje punkt do pliku .obj
+               //int _ileCnt = 0; //licznik pomocniczy
+               for (int j=0; j<xT.length; j++) {
+                  if (_ileCnt++ % theGraphQnt == 0) { //biore co ktorys pkt
+                     TObjConfig.setMinMax(xT[j], yT[j], zT[j]);
+                     TObjConfig.cube(xT[j], yT[j], zT[j]);
+                  } //koniec if
+               } //koniec for j
+               /************ dane do bloku Basi **************/
+               ((odc.Analizator)theNext).setInputData(xT, yT, zT, i);
+
+            } //koniec for i
+            
+            
+            outFlag = true;
+         } else {
+            showErr("Za malo danych");
+=======
 public class TDaneWej extends TAbstBlock {
     
     protected final static int CO_ILE_OBJ = 100; //co ktory pkt ma wyswietlac
@@ -158,7 +422,7 @@ public class TDaneWej extends TAbstBlock {
             theGraphQnt = CO_ILE_OBJ;
         } //koniec try-catch
         
-        //Spr. ustawienia pocz¹tkowe nastêpnego modu³u
+        //Spr. ustawienia poczï¿½tkowe nastï¿½pnego moduï¿½u
         if (theNext != null)    theNext.checkSettings();
     } //koniec checkSettings
     
@@ -173,7 +437,7 @@ public class TDaneWej extends TAbstBlock {
         System.out.println("otwieram plik theObjFileN: --|" + theObjFileN + "|--");
         fObjConf.openFile(theObjFileN);
         
-        //3. Przekazujê nastêpnym obiektom nazwê pliku
+        //3. Przekazujï¿½ nastï¿½pnym obiektom nazwï¿½ pliku
         theNext.createObjFile(aName);
     } //koniec createObjFile
     
@@ -194,7 +458,7 @@ public class TDaneWej extends TAbstBlock {
         //Odczytuje plik i zapamietuje wszystkie linie
         if (readFile1(_file, isLaser)) { //cz. udalo sie odczytac plik
             //TObjConfig.createFloor(); //rysow. podlogi
-            closeGraph(); //zamyka grafikê
+            closeGraph(); //zamyka grafikï¿½
             /*
             fObjConf.createFloor(); //rysow. podlogi
             //Jezeli zaznaczono, pokazuje pozycje robota
@@ -242,7 +506,7 @@ public class TDaneWej extends TAbstBlock {
                     else lXyzAL = getGazALFromLine(
                             linT[i].split(SEPARATOR), i*theVerStep);
                     
-                    if(lXyzAL.size() == 0) //ignorujê tê liniê (np. ## Player version 1.6.5 )
+                    if(lXyzAL.size() == 0) //ignorujï¿½ tï¿½ liniï¿½ (np. ## Player version 1.6.5 )
                         continue;
                     
                     //Zamieniam dane z fXyzAL na 3x[]
@@ -277,6 +541,7 @@ public class TDaneWej extends TAbstBlock {
         } catch (FileNotFoundException err) {
             //System.err.println ("ERR_01: " + err);
             showErr("ERR_01: " + err);
+>>>>>>> .r24
             outFlag = false;
         } catch (IOException err) {
             //System.err.println ("ERR_02: " + err);

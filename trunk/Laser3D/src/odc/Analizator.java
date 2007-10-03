@@ -79,17 +79,18 @@ public class Analizator extends TAbstBlock {
          //*******************************************
          // AREK.setInputData(seglist);
          
-         //Dodajê odcinki do grafiki
+         //Dodajï¿½ odcinki do grafiki
         for (Odcinek odc : seglist) {
             //System.out.println (
             //    "odc. od (" + odc.x1 + ", " + odc.y1 + ", " + odc.z1 + 
             //    ") do (" + odc.x2 + ", " + odc.y2 + ", " + odc.z2 + ");");
             if (theCntLine++ % theGraphQnt == 0) { //biore co ktorys pkt
-                fObjConf.setMinMax(odc.x1, odc.y1, odc.z1); //ustawiam min i max (do pod³ogi)
-                fObjConf.setMinMax(odc.x2, odc.y2, odc.z2); //ustawiam min i max (do pod³ogi)
+                fObjConf.setMinMax(odc.x1, odc.y1, odc.z1); //ustawiam min i max (do podï¿½ogi)
+                fObjConf.setMinMax(odc.x2, odc.y2, odc.z2); //ustawiam min i max (do podï¿½ogi)
                 fObjConf.line(odc.x1, odc.y1, odc.z1, odc.x2, odc.y2, odc.z2, "gray", "line");
             } //koniec if
         } //koniec for
+        segmenty();
     }
     // Generowanie pojedynczego odcinka i dodanie do listy odcinkï¿½
     
@@ -138,6 +139,11 @@ public class Analizator extends TAbstBlock {
 
    
    //Generowanie listy odcinkï¿½ i zapis do pliku
+
+  
+    public ArrayList segmenty()
+    {
+=======
     private ArrayList<Odcinek> segmenty()
     {   //System.out.println ("ccc xx.l: " + xx.length);
         if(xx==null) 
@@ -151,9 +157,6 @@ public class Analizator extends TAbstBlock {
             System.exit(0);
         }
         
-        int k1=0;
-        int k2=-1;
-        Odcinek.tlista();
           ArrayList <Para> lista = new ArrayList <Para> ();
         for(int i=0;i<xx.length;i++){
             if( Math.sqrt(xx[i]*xx[i]+yy[i]*yy[i]+zz[i]*zz[i])< MAXX) k2=i;
@@ -172,9 +175,6 @@ public class Analizator extends TAbstBlock {
             lseg(k1, k2);
         }
          System.out.println(Odcinek.lista.size());
-        return Odcinek.lista;
-    }
-    
    // Oblicza odlegoï¿½punktu c,y od prostej
     
    double dist(double c, double s,double d, double x, double y ) {
@@ -187,7 +187,7 @@ public class Analizator extends TAbstBlock {
 
    public JComponent getJComponent() {
      JPanel jp =  new JPanel();
-     // Tutaj dodaæ inne elementy graficzne
+     // Tutaj dodaï¿½ inne elementy graficzne
      jp.add(getObjP());
      return jp;
    }
@@ -203,11 +203,11 @@ public class Analizator extends TAbstBlock {
             theGraphQnt = CO_ILE_OBJ;
         } //koniec try-catch
         
-        //Spr. ustawienia pocz¹tkowe nastêpnego modu³u
+        //Spr. ustawienia poczï¿½tkowe nastï¿½pnego moduï¿½u
         if (theNext != null)    theNext.checkSettings();
     } //koniec checkSettings
    
-   /************ Micha³ ***************/
+   /************ Michaï¿½ ***************/
     
     public void createObjFile(String aName) 
     {
@@ -220,6 +220,6 @@ public class Analizator extends TAbstBlock {
       fObjConf.openFile(theObjFileN);
 
    } //koniec createObjFile
-    //=== Micha³ koniec
+    //=== Michaï¿½ koniec
 }
 
