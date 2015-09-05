@@ -1,0 +1,1 @@
+Oprogramowanie przetwarzające dane pomiarowe do pewnej struktury płaszczyzn.
